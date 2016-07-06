@@ -5,26 +5,41 @@ import org.junit.Test;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class EmployeeTest {
 
-    private EntityManager em;
+    private EntityManagerFactory entityManagerFactory;
 
     @Before
     public void setUp() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        em = emf.createEntityManager();
+        entityManagerFactory = Persistence.createEntityManagerFactory("NewPersistenceUnit");
     }
 
     @After
     public void tearDown() {
-        if (em != null) {
-            em.close();
-        }
+        entityManagerFactory.close();
     }
 
-    @Test public void testPersistEmployee() {
-        Employee emp = new Employee(158);
-        em.persist(emp);
+    @Test
+    public void testBasicUsage() {
+        // create a couple of employees...
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(new Employee(128));
+        entityManager.persist(new Employee(129));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        // now lets pull employees from the database and list them
+        entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        List<Employee> result = entityManager.createQuery("from Employee", Employee.class).getResultList();
+        for (Employee employee : result) {
+            System.out.println("Employee(" + employee.getId() + ")");
+        }
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
+
 }
