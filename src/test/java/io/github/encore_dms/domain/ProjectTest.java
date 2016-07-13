@@ -1,5 +1,7 @@
 package io.github.encore_dms.domain;
 
+import org.h2.tools.Server;
+import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,10 @@ public class ProjectTest {
             System.out.println(project.getUuid());
         }
         entityManager.getTransaction().commit();
+
+        // allows viewing contents of db in web browser
+        //entityManager.unwrap(Session.class).doWork(Server::startWebServer);
+
         entityManager.close();
     }
 }
