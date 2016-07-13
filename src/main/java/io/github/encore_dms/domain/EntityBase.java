@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @MappedSuperclass
 public class EntityBase {
-
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
@@ -20,5 +19,4 @@ public class EntityBase {
     public UUID getUuid() {
         return uuid;
     }
-
 }
