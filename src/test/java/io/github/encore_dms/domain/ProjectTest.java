@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class ProjectTest {
@@ -30,8 +31,8 @@ public class ProjectTest {
     public void testBasicUsage() throws Exception {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.persist(new Project());
-        entityManager.persist(new Project());
+        entityManager.persist(new Project("test1", "first testing", ZonedDateTime.now(), ZonedDateTime.now()));
+        entityManager.persist(new Project("test2", "second testing", ZonedDateTime.now(), ZonedDateTime.now()));
         entityManager.getTransaction().commit();
         entityManager.close();
 
@@ -39,7 +40,7 @@ public class ProjectTest {
         entityManager.getTransaction().begin();
         List<Project> result = entityManager.createQuery("from Project", Project.class).getResultList();
         for (Project project : result) {
-            System.out.println(project.getUuid());
+            System.out.println(project);
         }
         entityManager.getTransaction().commit();
 

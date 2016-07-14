@@ -9,7 +9,8 @@ import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
 @MappedSuperclass
-public class EntityBase {
+abstract class AbstractEntity {
+
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
@@ -19,4 +20,9 @@ public class EntityBase {
     public UUID getUuid() {
         return uuid;
     }
+
+    public String toString() {
+        return "UUID: " + getUuid() + "\n";
+    }
+
 }
