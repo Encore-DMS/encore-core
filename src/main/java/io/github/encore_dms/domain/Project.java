@@ -44,7 +44,7 @@ public class Project extends AbstractTimelineEntity {
     @OrderBy("startTime ASC")
     private List<Experiment> experiments;
 
-    public List<Experiment> getExperiments() {
+    public Iterable<Experiment> getExperiments() {
         return experiments;
     }
 

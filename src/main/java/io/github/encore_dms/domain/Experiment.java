@@ -14,9 +14,7 @@ public class Experiment extends AbstractTimelineEntity {
         setPurpose(purpose);
     }
 
-    protected Experiment() {
-
-    }
+    protected Experiment() {}
 
     @Basic
     private String purpose;
@@ -32,7 +30,7 @@ public class Experiment extends AbstractTimelineEntity {
     @ManyToMany(mappedBy = "experiments")
     private Set<Project> projects;
 
-    public Set<Project> getProjects() {
+    public Iterable<Project> getProjects() {
         return projects;
     }
 
