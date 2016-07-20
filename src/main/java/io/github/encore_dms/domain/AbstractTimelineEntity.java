@@ -3,7 +3,6 @@ package io.github.encore_dms.domain;
 import io.github.encore_dms.DataContext;
 
 import javax.persistence.Basic;
-import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

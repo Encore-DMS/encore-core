@@ -15,6 +15,14 @@ public class DataContext {
         this.entityManager = entityManager;
     }
 
+    public void close() {
+        entityManager.close();
+    }
+
+    public Iterable<Project> getProjects() {
+        return entityManager.createQuery("SELECT p FROM Project p", Project.class).getResultList();
+    }
+
     public Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
         beginTransaction();
         try {
