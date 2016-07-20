@@ -13,10 +13,9 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DataContextTest {
-
     private EntityManagerFactory entityManagerFactory;
     private DataContext context;
 
@@ -30,6 +29,13 @@ public class DataContextTest {
     public void tearDown() throws Exception {
         context.close();
         entityManagerFactory.close();
+    }
+
+    @Test
+    public void close() throws Exception {
+        assertTrue(context.isOpen());
+        context.close();
+        assertFalse(context.isOpen());
     }
 
     @Test

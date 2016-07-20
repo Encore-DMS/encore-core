@@ -15,7 +15,14 @@ public class DataContext {
         this.entityManager = entityManager;
     }
 
+    public boolean isOpen() {
+        return entityManager.isOpen();
+    }
+
     public void close() {
+        if (!isOpen()) {
+            return;
+        }
         entityManager.close();
     }
 
