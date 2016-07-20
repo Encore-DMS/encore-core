@@ -6,6 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,6 +15,7 @@ public class Experiment extends AbstractTimelineEntity {
     public Experiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.purpose = purpose;
+        this.projects = new HashSet<>();
     }
 
     protected Experiment() {}
@@ -37,7 +39,12 @@ public class Experiment extends AbstractTimelineEntity {
     }
 
     public void addProject(Project project) {
-        transactionWrapped((Runnable) () -> projects.add(project));
+        transactionWrapped(() -> {
+            if (!projects.contains(project)) {
+                projects.add(project);
+                project.addExperiment(this);
+            }
+        });
     }
 
 }

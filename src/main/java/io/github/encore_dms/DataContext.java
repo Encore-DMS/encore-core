@@ -6,13 +6,16 @@ import io.github.encore_dms.domain.User;
 
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DataContext {
 
     private EntityManager entityManager;
+    private AtomicInteger transactionCount;
 
     public DataContext(EntityManager entityManager) {
         this.entityManager = entityManager;
+        this.transactionCount = new AtomicInteger(0);
     }
 
     public boolean isOpen() {
@@ -52,19 +55,28 @@ public class DataContext {
     }
 
     public void beginTransaction() {
-        entityManager.getTransaction().begin();
+        if (!isActiveTransaction()) {
+            entityManager.getTransaction().begin();
+        }
+        transactionCount.incrementAndGet();
     }
 
     public void commitTransaction() {
-        entityManager.getTransaction().commit();
+        if (transactionCount.get() == 1) {
+            entityManager.getTransaction().commit();
+        }
+        transactionCount.decrementAndGet();
     }
 
     public void rollbackTransaction() {
-        entityManager.getTransaction().rollback();
+        while (transactionCount.get() > 0) {
+            entityManager.getTransaction().rollback();
+            transactionCount.decrementAndGet();
+        }
     }
 
-    public void isActiveTransaction() {
-        entityManager.getTransaction().isActive();
+    public boolean isActiveTransaction() {
+        return entityManager.getTransaction().isActive();
     }
 
 }

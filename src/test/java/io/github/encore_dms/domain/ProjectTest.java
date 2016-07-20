@@ -1,0 +1,62 @@
+package io.github.encore_dms.domain;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+public class ProjectTest extends AbstractDomainTest {
+    private Project project;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
+        ZonedDateTime end = ZonedDateTime.parse("2016-07-25T11:12:13Z[GMT]");
+        project = new Project(context, null, "test project", "testing purposes", start, end);
+    }
+
+    @Test
+    public void insertExperiment() throws Exception {
+        String purpose = "experimental testing";
+        ZonedDateTime start = ZonedDateTime.parse("2016-07-01T11:01:10Z[GMT]");
+        ZonedDateTime end = ZonedDateTime.parse("2016-07-01T16:12:14Z[GMT]");
+
+        Experiment e = project.insertExperiment(purpose, start, end);
+
+        assertEquals(purpose, e.getPurpose());
+        assertEquals(start, e.getStartTime());
+        assertEquals(end, e.getEndTime());
+
+        List<Project> projects = new ArrayList<>();
+        e.getProjects().forEach(projects::add);
+
+        assertEquals(1, projects.size());
+        assertEquals(project, projects.get(0));
+    }
+
+    @Test
+    public void getExperiments() throws Exception {
+        List<Experiment> expected = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                Experiment e = project.insertExperiment("purpose" + (i * 5 + k), time, time.plusDays(1));
+                expected.add(e);
+            }
+        }
+        expected.sort((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()));
+
+        List<Experiment> actual = new ArrayList<>();
+        project.getExperiments().forEach(actual::add);
+
+        assertEquals(expected, actual);
+    }
+
+}

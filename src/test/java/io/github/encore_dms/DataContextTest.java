@@ -56,10 +56,9 @@ public class DataContextTest {
     @Test
     public void getProjects() throws Exception {
         Set<Project> expected = new HashSet<>();
-
         for (int i = 0; i < 10; i++) {
             ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(i), ZoneId.of("America/Los_Angeles"));
-            Project p = context.insertProject("project" + i, "purpose" + i, time, time.plusMonths(1));
+            Project p = context.insertProject("project" + i, "purpose" + i, time, time.plusMonths(i));
             expected.add(p);
         }
 
