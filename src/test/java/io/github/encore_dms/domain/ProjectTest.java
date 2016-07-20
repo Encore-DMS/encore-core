@@ -1,5 +1,6 @@
 package io.github.encore_dms.domain;
 
+import io.github.encore_dms.DataContext;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.junit.After;
@@ -30,9 +31,10 @@ public class ProjectTest {
     @Test
     public void testBasicUsage() throws Exception {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
+        DataContext context = new DataContext(entityManager);
         entityManager.getTransaction().begin();
-        entityManager.persist(new Project("test1", "first testing", ZonedDateTime.now(), ZonedDateTime.now()));
-        entityManager.persist(new Project("test2", "second testing", ZonedDateTime.now(), ZonedDateTime.now()));
+        entityManager.persist(new Project(context, null, "test1", "first testing", ZonedDateTime.now(), ZonedDateTime.now()));
+        entityManager.persist(new Project(context, null, "test2", "second testing", ZonedDateTime.now(), ZonedDateTime.now()));
         entityManager.getTransaction().commit();
         entityManager.close();
 

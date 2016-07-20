@@ -1,5 +1,7 @@
 package io.github.encore_dms.domain;
 
+import io.github.encore_dms.DataContext;
+
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -9,9 +11,9 @@ import java.util.Set;
 @Entity
 public class Experiment extends AbstractTimelineEntity {
 
-    protected Experiment(String purpose, ZonedDateTime startTime, ZonedDateTime endTime) {
-        super(startTime, endTime);
-        setPurpose(purpose);
+    public Experiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
+        super(context, owner, start, end);
+        this.purpose = purpose;
     }
 
     protected Experiment() {}
@@ -24,7 +26,7 @@ public class Experiment extends AbstractTimelineEntity {
     }
 
     public void setPurpose(String purpose) {
-        this.purpose = purpose;
+        transactionWrapped((Runnable) () -> this.purpose = purpose);
     }
 
     @ManyToMany(mappedBy = "experiments")
@@ -32,6 +34,10 @@ public class Experiment extends AbstractTimelineEntity {
 
     public Iterable<Project> getProjects() {
         return projects;
+    }
+
+    public void addProject(Project project) {
+        transactionWrapped((Runnable) () -> projects.add(project));
     }
 
 }

@@ -1,16 +1,20 @@
 package io.github.encore_dms.domain;
 
+import io.github.encore_dms.DataContext;
+
 import javax.persistence.Basic;
+import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @MappedSuperclass
-class AbstractTimelineEntity extends AbstractEntity {
+abstract class AbstractTimelineEntity extends AbstractEntity implements TimelineEntity {
 
-    protected AbstractTimelineEntity(ZonedDateTime startTime, ZonedDateTime endTime) {
-        setStartTime(startTime);
-        setEndTime(endTime);
+    AbstractTimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
+        super(context, owner);
+        this.startTime = start;
+        this.endTime = end;
     }
 
     protected AbstractTimelineEntity() {}
@@ -22,8 +26,8 @@ class AbstractTimelineEntity extends AbstractEntity {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
-        this.startTime = startTime;
+    private void setStartTime(ZonedDateTime startTime) {
+        transactionWrapped((Runnable) () -> this.startTime = startTime);
     }
 
     @Basic
@@ -33,8 +37,8 @@ class AbstractTimelineEntity extends AbstractEntity {
         return endTime;
     }
 
-    public void setEndTime(ZonedDateTime endTime) {
-        this.endTime = endTime;
+    private void setEndTime(ZonedDateTime endTime) {
+        transactionWrapped((Runnable) () -> this.endTime = endTime);
     }
 
     public String toString() {

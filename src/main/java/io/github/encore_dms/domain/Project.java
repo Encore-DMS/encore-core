@@ -1,19 +1,19 @@
 package io.github.encore_dms.domain;
 
-import javax.persistence.Basic;
+import io.github.encore_dms.DataContext;
+
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
 public class Project extends AbstractTimelineEntity {
 
-    protected Project(String name, String purpose, ZonedDateTime startTime, ZonedDateTime endTime) {
-        super(startTime, endTime);
-        setName(name);
-        setPurpose(purpose);
+    public Project(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
+        super(context, owner, start, end);
+        this.name = name;
+        this.purpose = purpose;
     }
 
     protected Project() {}
@@ -26,7 +26,7 @@ public class Project extends AbstractTimelineEntity {
     }
 
     public void setName(String name) {
-        this.name = name;
+        transactionWrapped((Runnable) () -> this.name = name);
     }
 
     @Basic
@@ -37,7 +37,7 @@ public class Project extends AbstractTimelineEntity {
     }
 
     public void setPurpose(String purpose) {
-        this.purpose = purpose;
+        transactionWrapped((Runnable) () -> this.purpose = purpose);
     }
 
     @ManyToMany
@@ -46,6 +46,16 @@ public class Project extends AbstractTimelineEntity {
 
     public Iterable<Experiment> getExperiments() {
         return experiments;
+    }
+
+    public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Experiment e = new Experiment(c, c.getAuthenticatedUser(), purpose, start, end);
+            e.addProject(this);
+            c.insertEntity(e);
+            return e;
+        });
     }
 
     public String toString() {
