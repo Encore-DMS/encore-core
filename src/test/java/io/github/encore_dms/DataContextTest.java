@@ -57,11 +57,14 @@ public class DataContextTest {
     @Test
     public void getProjects() throws Exception {
         List<Project> expected = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(i), ZoneId.of("America/Los_Angeles"));
-            Project p = context.insertProject("project" + i, "purpose" + i, time, time.plusMonths(i));
-            expected.add(p);
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                Project p = context.insertProject("project" + (i * 5 + k), "purpose" + (i * 5 + k), time, time.plusMonths(i));
+                expected.add(p);
+            }
         }
+        expected.sort((p1, p2) -> p1.getStartTime().compareTo(p2.getStartTime()));
 
         List<Project> actual = context.getProjects().collect(Collectors.toList());
 

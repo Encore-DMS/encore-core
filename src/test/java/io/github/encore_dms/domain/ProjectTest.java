@@ -65,7 +65,7 @@ public class ProjectTest extends AbstractDomainTest {
         for (int i = 0; i < 2; i++) {
             for (int k = 0; k < 5; k++) {
                 ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
-                Experiment e = project.insertExperiment("purpose" + (i * 5 + k), time, time.plusDays(1));
+                Experiment e = project.insertExperiment("purpose" + (i * 5 + k), time, time.plusDays(i));
                 expected.add(e);
             }
         }
