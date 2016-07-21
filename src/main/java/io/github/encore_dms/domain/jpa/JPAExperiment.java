@@ -7,9 +7,10 @@ import io.github.encore_dms.domain.User;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Entity(name = "Experiment")
@@ -18,7 +19,7 @@ class JPAExperiment extends AbstractJPATimelineEntity implements io.github.encor
     JPAExperiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.purpose = purpose;
-        this.projects = new HashSet<>();
+        this.projects = new LinkedList<>();
     }
 
     protected JPAExperiment() {}
@@ -37,7 +38,8 @@ class JPAExperiment extends AbstractJPATimelineEntity implements io.github.encor
     }
 
     @ManyToMany(targetEntity = JPAProject.class, mappedBy = "experiments")
-    private Set<Project> projects;
+    @OrderBy("startTime ASC")
+    private List<Project> projects;
 
     public Stream<Project> getProjects() {
         return projects.stream();
@@ -48,6 +50,7 @@ class JPAExperiment extends AbstractJPATimelineEntity implements io.github.encor
         transactionWrapped(() -> {
             if (!projects.contains(project)) {
                 projects.add(project);
+                projects.sort((p1, p2) -> p1.getStartTime().compareTo(p2.getStartTime()));
                 project.addExperiment(this);
             }
         });

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class JPAProjectTest extends AbstractJPADomainTest {
+public class JPAProjectTest extends AbstractJPATest {
 
     private Project project;
 
@@ -82,6 +82,9 @@ public class JPAProjectTest extends AbstractJPADomainTest {
     public void addExperiment() throws Exception {
         assertEquals(0, project.getExperiments().count());
         Experiment e = new JPAExperiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        project.addExperiment(e);
+        assertEquals(1, project.getExperiments().count());
+        assertEquals(e, project.getExperiments().findFirst().orElse(null));
     }
 
 }

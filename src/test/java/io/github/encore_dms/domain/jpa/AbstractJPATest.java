@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-abstract class AbstractJPADomainTest {
+abstract class AbstractJPATest {
 
     private EntityManagerFactory entityManagerFactory;
     @SuppressWarnings("WeakerAccess")
