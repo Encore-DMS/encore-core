@@ -55,7 +55,12 @@ public class JPAExperimentTest extends AbstractJPATest {
 
     @Test
     public void addProject() throws Exception {
-
+        assertEquals(0, experiment.getProjects().count());
+        Project p = new JPAProject(context, null, "name", "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        experiment.addProject(p);
+        assertEquals(1, experiment.getProjects().count());
+        assertEquals(p, experiment.getProjects().findFirst().orElse(null));
+        assertEquals(experiment, p.getExperiments().findFirst().orElse(null));
     }
 
 }

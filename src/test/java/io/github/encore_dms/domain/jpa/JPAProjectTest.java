@@ -85,6 +85,7 @@ public class JPAProjectTest extends AbstractJPATest {
         project.addExperiment(e);
         assertEquals(1, project.getExperiments().count());
         assertEquals(e, project.getExperiments().findFirst().orElse(null));
+        assertEquals(project, e.getProjects().findFirst().orElse(null));
     }
 
 }
