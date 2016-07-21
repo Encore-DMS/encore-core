@@ -2,6 +2,7 @@ package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.User;
+import io.github.encore_dms.exceptions.EncoreException;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -59,7 +60,7 @@ abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
         }
     }
 
-    <T> T transactionWrapped(Callable<T> task) throws Exception {
+    <T> T transactionWrapped(Callable<T> task) {
         DataContext context = getDataContext();
 
         context.beginTransaction();
@@ -67,9 +68,12 @@ abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
             T result = task.call();
             context.commitTransaction();
             return result;
-        } catch (Exception e) {
+        } catch (EncoreException e) {
             context.rollbackTransaction();
             throw e;
+        } catch (Exception e) {
+            context.rollbackTransaction();
+            throw new EncoreException("Transaction failed: " + e.getMessage(), e);
         }
     }
 

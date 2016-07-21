@@ -61,7 +61,7 @@ class JPAProject extends AbstractJPATimelineEntity implements io.github.encore_d
     }
 
     @Override
-    public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception {
+    public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
             Experiment e = new JPAExperiment(c, c.getAuthenticatedUser(), purpose, start, end);

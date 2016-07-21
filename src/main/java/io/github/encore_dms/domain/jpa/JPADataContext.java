@@ -39,7 +39,7 @@ class JPADataContext implements DataContext {
     }
 
     @Override
-    public JPAProject insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
+    public Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
         beginTransaction();
         try {
             JPAProject p = new JPAProject(this, getAuthenticatedUser(), name, purpose, start, end);

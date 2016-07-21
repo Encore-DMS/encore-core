@@ -15,7 +15,7 @@ public interface Project extends Entity, TimelineEntity {
 
     Stream<Experiment> getExperiments();
 
-    Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception;
+    Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end);
 
     void addExperiment(Experiment Experiment);
 
