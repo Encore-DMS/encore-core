@@ -2,11 +2,11 @@
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
 
     <persistence-unit name="NewPersistenceUnit">
-        <class>io.github.encore_dms.domain.Project</class>
-        <class>io.github.encore_dms.domain.AbstractEntity</class>
-        <class>io.github.encore_dms.domain.Experiment</class>
-        <class>io.github.encore_dms.domain.AbstractTimelineEntity</class>
-        <class>io.github.encore_dms.domain.User</class>
+        <class>io.github.encore_dms.domain.jpa.JPAProject</class>
+        <class>io.github.encore_dms.domain.jpa.AbstractJPAEntity</class>
+        <class>io.github.encore_dms.domain.jpa.JPAExperiment</class>
+        <class>io.github.encore_dms.domain.jpa.AbstractJPATimelineEntity</class>
+        <class>io.github.encore_dms.domain.jpa.JPAUser</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />

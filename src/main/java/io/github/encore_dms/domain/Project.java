@@ -1,80 +1,22 @@
 package io.github.encore_dms.domain;
 
-import io.github.encore_dms.DataContext;
-
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
 
-@Entity
-public class Project extends AbstractTimelineEntity {
+public interface Project extends Entity, TimelineEntity {
 
-    public Project(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
-        super(context, owner, start, end);
-        this.name = name;
-        this.purpose = purpose;
-        this.experiments = new LinkedList<>();
-    }
+    String getName();
 
-    protected Project() {}
+    void setName(String name);
 
-    @Basic
-    private String name;
+    String getPurpose();
 
-    public String getName() {
-        return name;
-    }
+    void setPurpose(String purpose);
 
-    public void setName(String name) {
-        transactionWrapped((Runnable) () -> this.name = name);
-    }
+    Stream<Experiment> getExperiments();
 
-    @Basic
-    private String purpose;
+    Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception;
 
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public void setPurpose(String purpose) {
-        transactionWrapped((Runnable) () -> this.purpose = purpose);
-    }
-
-    @ManyToMany
-    @OrderBy("startTime ASC")
-    private List<Experiment> experiments;
-
-    public Stream<Experiment> getExperiments() {
-        return experiments.stream();
-    }
-
-    public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception {
-        return transactionWrapped(() -> {
-            DataContext c = getDataContext();
-            Experiment e = new Experiment(c, c.getAuthenticatedUser(), purpose, start, end);
-            addExperiment(e);
-            c.insertEntity(e);
-            return e;
-        });
-    }
-
-    public void addExperiment(Experiment experiment) {
-        transactionWrapped(() -> {
-            if (!experiments.contains(experiment)) {
-                experiments.add(experiment);
-                experiments.sort((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()));
-                experiment.addProject(this);
-            }
-        });
-    }
-
-    public String toString() {
-        return super.toString() + "Name: " + getName() + "\n";
-    }
+    void addExperiment(Experiment Experiment);
 
 }

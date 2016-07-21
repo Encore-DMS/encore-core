@@ -1,5 +1,7 @@
-package io.github.encore_dms.domain;
+package io.github.encore_dms.domain.jpa;
 
+import io.github.encore_dms.domain.Experiment;
+import io.github.encore_dms.domain.Project;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class ProjectTest extends AbstractDomainTest {
+public class JPAProjectTest extends AbstractJPADomainTest {
 
     private Project project;
 
@@ -22,7 +24,7 @@ public class ProjectTest extends AbstractDomainTest {
         super.setUp();
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-25T11:12:13Z[GMT]");
-        project = new Project(context, null, "test project", "testing purposes", start, end);
+        project = new JPAProject(context, null, "test project", "testing purposes", start, end);
     }
 
     @Test
@@ -79,7 +81,7 @@ public class ProjectTest extends AbstractDomainTest {
     @Test
     public void addExperiment() throws Exception {
         assertEquals(0, project.getExperiments().count());
-        Experiment e = new Experiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        Experiment e = new JPAExperiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
     }
 
 }

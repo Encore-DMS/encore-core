@@ -1,6 +1,7 @@
-package io.github.encore_dms.domain;
+package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.User;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -8,14 +9,14 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @MappedSuperclass
-abstract class AbstractEntity implements Entity {
+abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
 
-    AbstractEntity(DataContext context, User owner) {
+    AbstractJPAEntity(DataContext context, User owner) {
         this.dataContext = context;
         this.owner = owner;
     }
 
-    protected AbstractEntity() {}
+    protected AbstractJPAEntity() {}
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -27,7 +28,7 @@ abstract class AbstractEntity implements Entity {
         return uuid;
     }
 
-    @ManyToOne
+    @ManyToOne(targetEntity = JPAUser.class)
     private User owner;
 
     public User getOwner() {
@@ -41,7 +42,7 @@ abstract class AbstractEntity implements Entity {
     @Transient
     private DataContext dataContext;
 
-    public DataContext getDataContext() {
+    DataContext getDataContext() {
         return dataContext;
     }
 

@@ -1,6 +1,8 @@
-package io.github.encore_dms.domain;
+package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.TimelineEntity;
+import io.github.encore_dms.domain.User;
 
 import javax.persistence.Basic;
 import javax.persistence.MappedSuperclass;
@@ -8,15 +10,15 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @MappedSuperclass
-abstract class AbstractTimelineEntity extends AbstractEntity implements TimelineEntity {
+abstract class AbstractJPATimelineEntity extends AbstractJPAEntity implements TimelineEntity {
 
-    AbstractTimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
+    AbstractJPATimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner);
         this.startTime = start;
         this.endTime = end;
     }
 
-    protected AbstractTimelineEntity() {}
+    protected AbstractJPATimelineEntity() {}
 
     @Basic
     private ZonedDateTime startTime;

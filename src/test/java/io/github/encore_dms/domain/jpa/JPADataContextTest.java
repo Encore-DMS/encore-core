@@ -1,12 +1,8 @@
-package io.github.encore_dms;
+package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.domain.Project;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,21 +12,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class DataContextTest {
-    private EntityManagerFactory entityManagerFactory;
-    private DataContext context;
-
-    @Before
-    public void setUp() throws Exception {
-        entityManagerFactory = Persistence.createEntityManagerFactory("NewPersistenceUnit");
-        context = new DataContext(entityManagerFactory.createEntityManager());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-        entityManagerFactory.close();
-    }
+public class JPADataContextTest extends AbstractJPADomainTest {
 
     @Test
     public void close() throws Exception {
