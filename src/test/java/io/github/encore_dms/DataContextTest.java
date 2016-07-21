@@ -10,8 +10,9 @@ import javax.persistence.Persistence;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -55,15 +56,14 @@ public class DataContextTest {
 
     @Test
     public void getProjects() throws Exception {
-        Set<Project> expected = new HashSet<>();
+        List<Project> expected = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(i), ZoneId.of("America/Los_Angeles"));
             Project p = context.insertProject("project" + i, "purpose" + i, time, time.plusMonths(i));
             expected.add(p);
         }
 
-        Set<Project> actual = new HashSet<>();
-        context.getProjects().forEach(actual::add);
+        List<Project> actual = context.getProjects().collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }

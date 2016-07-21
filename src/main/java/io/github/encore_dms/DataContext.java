@@ -7,6 +7,7 @@ import io.github.encore_dms.domain.User;
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class DataContext {
 
@@ -29,8 +30,8 @@ public class DataContext {
         entityManager.close();
     }
 
-    public Iterable<Project> getProjects() {
-        return entityManager.createQuery("SELECT p FROM Project p", Project.class).getResultList();
+    public Stream<Project> getProjects() {
+        return entityManager.createQuery("SELECT p FROM Project p ORDER BY p.startTime ASC", Project.class).getResultList().stream();
     }
 
     public Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {

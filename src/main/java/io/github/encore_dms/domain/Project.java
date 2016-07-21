@@ -9,6 +9,7 @@ import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 public class Project extends AbstractTimelineEntity {
@@ -48,8 +49,8 @@ public class Project extends AbstractTimelineEntity {
     @OrderBy("startTime ASC")
     private List<Experiment> experiments;
 
-    public Iterable<Experiment> getExperiments() {
-        return experiments;
+    public Stream<Experiment> getExperiments() {
+        return experiments.stream();
     }
 
     public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) throws Exception {

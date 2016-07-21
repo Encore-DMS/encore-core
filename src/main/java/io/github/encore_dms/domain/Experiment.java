@@ -8,6 +8,7 @@ import javax.persistence.ManyToMany;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Entity
 public class Experiment extends AbstractTimelineEntity {
@@ -34,8 +35,8 @@ public class Experiment extends AbstractTimelineEntity {
     @ManyToMany(mappedBy = "experiments")
     private Set<Project> projects;
 
-    public Iterable<Project> getProjects() {
-        return projects;
+    public Stream<Project> getProjects() {
+        return projects.stream();
     }
 
     public void addProject(Project project) {
