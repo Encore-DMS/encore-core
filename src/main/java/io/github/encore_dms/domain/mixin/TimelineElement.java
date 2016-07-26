@@ -1,8 +1,8 @@
-package io.github.encore_dms.domain;
+package io.github.encore_dms.domain.mixin;
 
 import java.time.ZonedDateTime;
 
-public interface TimelineEntity extends Entity {
+public interface TimelineElement {
 
     ZonedDateTime getStartTime();
 

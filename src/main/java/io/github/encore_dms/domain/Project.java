@@ -1,9 +1,12 @@
 package io.github.encore_dms.domain;
 
+import io.github.encore_dms.domain.mixin.Owned;
+import io.github.encore_dms.domain.mixin.TimelineElement;
+
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-public interface Project extends Entity, TimelineEntity {
+public interface Project extends Entity, TimelineElement, Owned {
 
     String getName();
 

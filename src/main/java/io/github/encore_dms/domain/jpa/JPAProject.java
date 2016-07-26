@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity(name = "Project")
-class JPAProject extends AbstractJPATimelineEntity implements io.github.encore_dms.domain.Project {
+class JPAProject extends JPATimelineEntityBase implements io.github.encore_dms.domain.Project {
 
     JPAProject(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
@@ -80,10 +80,6 @@ class JPAProject extends AbstractJPATimelineEntity implements io.github.encore_d
                 experiment.addProject(this);
             }
         });
-    }
-
-    public String toString() {
-        return super.toString() + "Name: " + getName() + "\n";
     }
 
 }

@@ -1,11 +1,11 @@
 package io.github.encore_dms.domain;
 
-import java.util.UUID;
+import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.mixin.AccessControllable;
+import io.github.encore_dms.domain.mixin.Identity;
 
-public interface Entity {
+public interface Entity extends Identity, AccessControllable {
 
-    User getOwner();
-
-    UUID getUuid();
+    DataContext getDataContext();
 
 }

@@ -6,7 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 
 @Entity(name = "User")
-class JPAUser extends AbstractJPAEntity implements io.github.encore_dms.domain.User {
+class JPAUser extends JPAEntityBase implements io.github.encore_dms.domain.User {
 
     JPAUser(DataContext context, String username, String password) {
         this.username = username;

@@ -6,18 +6,18 @@ import io.github.encore_dms.exceptions.EncoreException;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.net.URI;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @MappedSuperclass
-abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
+abstract class JPAEntityBase implements io.github.encore_dms.domain.Entity {
 
-    AbstractJPAEntity(DataContext context, User owner) {
+    JPAEntityBase(DataContext context) {
         this.dataContext = context;
-        this.owner = owner;
     }
 
-    protected AbstractJPAEntity() {}
+    protected JPAEntityBase() {}
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -25,25 +25,31 @@ abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
     @Id
     private UUID uuid;
 
-    public UUID getUuid() {
+    @Override
+    public UUID getUUID() {
         return uuid;
     }
 
-    @ManyToOne(targetEntity = JPAUser.class)
-    private User owner;
-
-    public User getOwner() {
-        return owner;
+    @Override
+    public URI getURI() {
+        return null;
     }
 
-    private void setOwner(User owner) {
-        transactionWrapped((Runnable) () -> this.owner = owner);
+    @Override
+    public boolean canRead(User user) {
+        return false;
+    }
+
+    @Override
+    public boolean canWrite(User user) {
+        return false;
     }
 
     @Transient
     private DataContext dataContext;
 
-    DataContext getDataContext() {
+    @Override
+    public DataContext getDataContext() {
         return dataContext;
     }
 
@@ -75,10 +81,6 @@ abstract class AbstractJPAEntity implements io.github.encore_dms.domain.Entity {
             context.rollbackTransaction();
             throw new EncoreException("Transaction failed: " + e.getMessage(), e);
         }
-    }
-
-    public String toString() {
-        return "UUID: " + getUuid() + "\n";
     }
 
 }

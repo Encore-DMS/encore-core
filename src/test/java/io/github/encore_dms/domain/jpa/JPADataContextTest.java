@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class JPADataContextTest extends AbstractJPATest {
+public class JPADataContextTest extends JPATest {
 
     @Test
     public void close() throws Exception {

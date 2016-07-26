@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class JPAProjectTest extends AbstractJPATest {
+public class JPAProjectTest extends JPATest {
 
     private Project project;
 

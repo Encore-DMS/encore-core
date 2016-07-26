@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity(name = "Experiment")
-class JPAExperiment extends AbstractJPATimelineEntity implements io.github.encore_dms.domain.Experiment {
+class JPAExperiment extends JPATimelineEntityBase implements io.github.encore_dms.domain.Experiment {
 
     JPAExperiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
@@ -41,6 +41,7 @@ class JPAExperiment extends AbstractJPATimelineEntity implements io.github.encor
     @OrderBy("startTime ASC")
     private List<Project> projects;
 
+    @Override
     public Stream<Project> getProjects() {
         return projects.stream();
     }
