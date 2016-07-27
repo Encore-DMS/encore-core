@@ -1,6 +1,4 @@
-# Encore Core
-
-[![Build Status](https://travis-ci.org/Encore-DMS/encore-core.svg?branch=master)](https://travis-ci.org/Encore-DMS/encore-core)
+# Encore Core [![Build Status](https://travis-ci.org/Encore-DMS/encore-core.svg?branch=master)](https://travis-ci.org/Encore-DMS/encore-core)
 
 Encore data management system core.
 
