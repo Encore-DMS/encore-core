@@ -1,8 +1,8 @@
 package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.DataContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -15,14 +15,14 @@ abstract class JPATest {
     EntityManager entityManager; // To inspect the db: entityManager.unwrap(Session.class).doWork(Server::startWebServer)
     DataContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         entityManagerFactory = Persistence.createEntityManagerFactory("NewPersistenceUnit");
         entityManager = entityManagerFactory.createEntityManager();
         context = new JPADataContext(entityManager);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         context.close();
         entityManagerFactory.close();

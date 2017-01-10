@@ -2,8 +2,8 @@ package io.github.encore_dms.domain.jpa;
 
 import io.github.encore_dms.domain.Experiment;
 import io.github.encore_dms.domain.Project;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class JPAProjectTest extends JPATest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
