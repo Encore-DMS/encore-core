@@ -17,7 +17,7 @@ abstract class JPATest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        entityManagerFactory = Persistence.createEntityManagerFactory("NewPersistenceUnit");
+        entityManagerFactory = Persistence.createEntityManagerFactory("Test");
         entityManager = entityManagerFactory.createEntityManager();
         context = new JPADataContext(entityManager);
     }

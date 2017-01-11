@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
 
-    <persistence-unit name="Main">
+    <persistence-unit name="Test">
         <class>io.github.encore_dms.domain.jpa.JPAProject</class>
         <class>io.github.encore_dms.domain.jpa.JPAEntityBase</class>
         <class>io.github.encore_dms.domain.jpa.JPAExperiment</class>
@@ -9,7 +9,12 @@
         <class>io.github.encore_dms.domain.jpa.JPAUser</class>
         <class>io.github.encore_dms.domain.jpa.JPAAnnotatableEntityBase</class>
         <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
+            <property name="javax.persistence.jdbc.user" value="sa" />
+            <property name="javax.persistence.jdbc.password" value="" />
 
+            <property name="hibernate.hbm2ddl.auto" value="create" />
         </properties>
     </persistence-unit>
 
