@@ -5,8 +5,8 @@ import java.util.UUID;
 
 public interface Identity {
 
-    UUID getUUID();
+    UUID getUuid();
 
-    URI getURI();
+    URI getUri();
 
 }

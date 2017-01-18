@@ -1,7 +1,6 @@
-package io.github.encore_dms.domain.jpa;
+package io.github.encore_dms;
 
 import io.github.encore_dms.domain.Project;
-import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,16 +11,16 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JPADataContextTest extends JPATest {
+public class DataContextTest extends TestBase {
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void close() throws Exception {
         assertTrue(context.isOpen());
         context.close();
         assertFalse(context.isOpen());
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void insertProject() throws Exception {
         String name = "test project";
         String purpose = "testing purposes";
@@ -36,7 +35,7 @@ public class JPADataContextTest extends JPATest {
         assertEquals(end, p.getEndTime());
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void getProjects() throws Exception {
         List<Project> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

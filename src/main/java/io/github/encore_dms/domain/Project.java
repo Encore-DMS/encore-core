@@ -1,25 +1,76 @@
 package io.github.encore_dms.domain;
 
-import io.github.encore_dms.domain.mixin.Owned;
-import io.github.encore_dms.domain.mixin.TimelineElement;
+import io.github.encore_dms.DataContext;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
-public interface Project extends Entity, TimelineElement, Owned {
+@Entity
+public class Project extends TimelineEntityBase {
 
-    String getName();
+    public Project(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
+        super(context, owner, start, end);
+        this.name = name;
+        this.purpose = purpose;
+        this.experiments = new LinkedList<>();
+    }
 
-    void setName(String name);
+    protected Project() {}
 
-    String getPurpose();
+    @Basic
+    private String name;
 
-    void setPurpose(String purpose);
+    public String getName() {
+        return name;
+    }
 
-    Stream<Experiment> getExperiments();
+    public void setName(String name) {
+        transactionWrapped((Runnable) () -> this.name = name);
+    }
 
-    Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end);
+    @Basic
+    private String purpose;
 
-    void addExperiment(Experiment Experiment);
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        transactionWrapped((Runnable) () -> this.purpose = purpose);
+    }
+
+    @ManyToMany(targetEntity = Experiment.class)
+    @OrderBy("startTime ASC")
+    private List<Experiment> experiments;
+
+    public Stream<Experiment> getExperiments() {
+        return experiments.stream();
+    }
+
+    public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Experiment e = new Experiment(c, c.getAuthenticatedUser(), purpose, start, end);
+            addExperiment(e);
+            c.insertEntity(e);
+            return e;
+        });
+    }
+
+    public void addExperiment(Experiment experiment) {
+        transactionWrapped(() -> {
+            if (!experiments.contains(experiment)) {
+                experiments.add(experiment);
+                experiments.sort((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()));
+                experiment.addProject(this);
+            }
+        });
+    }
 
 }

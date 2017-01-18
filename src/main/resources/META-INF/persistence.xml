@@ -2,12 +2,12 @@
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
 
     <persistence-unit name="Main">
-        <class>io.github.encore_dms.domain.jpa.JPAProject</class>
-        <class>io.github.encore_dms.domain.jpa.JPAEntityBase</class>
-        <class>io.github.encore_dms.domain.jpa.JPAExperiment</class>
-        <class>io.github.encore_dms.domain.jpa.JPATimelineEntityBase</class>
-        <class>io.github.encore_dms.domain.jpa.JPAUser</class>
-        <class>io.github.encore_dms.domain.jpa.JPAAnnotatableEntityBase</class>
+        <class>io.github.encore_dms.domain.Project</class>
+        <class>io.github.encore_dms.domain.EntityBase</class>
+        <class>io.github.encore_dms.domain.Experiment</class>
+        <class>io.github.encore_dms.domain.TimelineEntityBase</class>
+        <class>io.github.encore_dms.domain.User</class>
+        <class>io.github.encore_dms.domain.AnnotatableEntityBase</class>
         <properties>
 
         </properties>

@@ -1,6 +1,5 @@
-package io.github.encore_dms.domain.jpa;
+package io.github.encore_dms;
 
-import io.github.encore_dms.DataContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -8,18 +7,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-abstract class JPATest {
+public abstract class TestBase {
 
     private EntityManagerFactory entityManagerFactory;
     @SuppressWarnings("WeakerAccess")
-    EntityManager entityManager; // To inspect the db: entityManager.unwrap(Session.class).doWork(Server::startWebServer)
-    DataContext context;
+    protected EntityManager entityManager; // To inspect the db: entityManager.unwrap(Session.class).doWork(Server::startWebServer)
+    protected DataContext context;
 
     @BeforeEach
     public void setUp() throws Exception {
         entityManagerFactory = Persistence.createEntityManagerFactory("Test");
         entityManager = entityManagerFactory.createEntityManager();
-        context = new JPADataContext(entityManager);
+        context = new DataContext(entityManager);
     }
 
     @AfterEach

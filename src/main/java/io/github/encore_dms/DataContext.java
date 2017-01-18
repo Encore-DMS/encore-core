@@ -4,30 +4,80 @@ import io.github.encore_dms.domain.Entity;
 import io.github.encore_dms.domain.Project;
 import io.github.encore_dms.domain.User;
 
+import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public interface DataContext {
+public class DataContext {
 
-    boolean isOpen();
+    private EntityManager entityManager;
+    private AtomicInteger transactionCount;
 
-    void close();
+    DataContext(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.transactionCount = new AtomicInteger(0);
+    }
 
-    Stream<Project> getProjects();
+    public boolean isOpen() {
+        return entityManager.isOpen();
+    }
 
-    Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end);
+    public void close() {
+        if (!isOpen()) {
+            return;
+        }
+        entityManager.close();
+    }
 
-    void insertEntity(Entity entity);
+    public Stream<Project> getProjects() {
+        return entityManager.createQuery("SELECT p FROM Project p ORDER BY p.startTime ASC", Project.class).getResultList().stream();
+    }
 
-    User getAuthenticatedUser();
+    public Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
+        beginTransaction();
+        try {
+            Project p = new Project(this, getAuthenticatedUser(), name, purpose, start, end);
+            insertEntity(p);
+            commitTransaction();
+            return p;
+        } catch (Exception e) {
+            rollbackTransaction();
+            throw e;
+        }
+    }
 
-    void beginTransaction();
+    public void insertEntity(Entity entity) {
+        entityManager.persist(entity);
+    }
 
-    void commitTransaction();
+    public User getAuthenticatedUser() {
+        return null;
+    }
 
-    void rollbackTransaction();
+    public void beginTransaction() {
+        if (!isActiveTransaction()) {
+            entityManager.getTransaction().begin();
+        }
+        transactionCount.incrementAndGet();
+    }
 
-    boolean isActiveTransaction();
+    public void commitTransaction() {
+        if (transactionCount.get() == 1) {
+            entityManager.getTransaction().commit();
+        }
+        transactionCount.decrementAndGet();
+    }
+
+    public void rollbackTransaction() {
+        while (transactionCount.get() > 0) {
+            entityManager.getTransaction().rollback();
+            transactionCount.decrementAndGet();
+        }
+    }
+
+    public boolean isActiveTransaction() {
+        return entityManager.getTransaction().isActive();
+    }
 
 }
-

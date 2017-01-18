@@ -1,23 +1,22 @@
-package io.github.encore_dms.domain.jpa;
+package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
-import io.github.encore_dms.domain.User;
 import io.github.encore_dms.domain.mixin.Owned;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-abstract class JPAAnnotatableEntityBase extends JPAEntityBase implements Owned {
+abstract class AnnotatableEntityBase extends EntityBase implements Owned {
 
-    JPAAnnotatableEntityBase(DataContext context, User owner) {
+    AnnotatableEntityBase(DataContext context, User owner) {
         super(context);
         this.owner = owner;
     }
 
-    protected JPAAnnotatableEntityBase() {}
+    protected AnnotatableEntityBase() {}
 
-    @ManyToOne(targetEntity = JPAUser.class)
+    @ManyToOne(targetEntity = User.class)
     private User owner;
 
     @Override

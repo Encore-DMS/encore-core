@@ -1,7 +1,6 @@
-package io.github.encore_dms.domain.jpa;
+package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
-import io.github.encore_dms.domain.User;
 import io.github.encore_dms.exceptions.EncoreException;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -11,13 +10,13 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @MappedSuperclass
-abstract class JPAEntityBase implements io.github.encore_dms.domain.Entity {
+abstract class EntityBase implements Entity {
 
-    JPAEntityBase(DataContext context) {
+    EntityBase(DataContext context) {
         this.dataContext = context;
     }
 
-    protected JPAEntityBase() {}
+    protected EntityBase() {}
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -26,12 +25,12 @@ abstract class JPAEntityBase implements io.github.encore_dms.domain.Entity {
     private UUID uuid;
 
     @Override
-    public UUID getUUID() {
+    public UUID getUuid() {
         return uuid;
     }
 
     @Override
-    public URI getURI() {
+    public URI getUri() {
         return null;
     }
 

@@ -1,9 +1,7 @@
-package io.github.encore_dms.domain.jpa;
+package io.github.encore_dms.domain;
 
-import io.github.encore_dms.domain.Experiment;
-import io.github.encore_dms.domain.Project;
+import io.github.encore_dms.TestBase;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -15,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class JPAProjectTest extends JPATest {
+public class ProjectTest extends TestBase {
 
     private Project project;
 
@@ -24,10 +22,10 @@ public class JPAProjectTest extends JPATest {
         super.setUp();
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-25T11:12:13Z[GMT]");
-        project = new JPAProject(context, null, "test project", "testing purposes", start, end);
+        project = new Project(context, null, "test project", "testing purposes", start, end);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void setName() throws Exception {
         String name = "a new project name";
         assertNotEquals(project.getName(), name);
@@ -35,7 +33,7 @@ public class JPAProjectTest extends JPATest {
         assertEquals(project.getName(), name);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void setPurpose() throws Exception {
         String purpose = "a new project purpose";
         assertNotEquals(project.getPurpose(), purpose);
@@ -43,7 +41,7 @@ public class JPAProjectTest extends JPATest {
         assertEquals(project.getPurpose(), purpose);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void insertExperiment() throws Exception {
         String purpose = "experimental testing";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T11:01:10Z[GMT]");
@@ -61,7 +59,7 @@ public class JPAProjectTest extends JPATest {
         assertEquals(project, projects.get(0));
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void getExperiments() throws Exception {
         List<Experiment> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -78,10 +76,10 @@ public class JPAProjectTest extends JPATest {
         assertEquals(expected, actual);
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void addExperiment() throws Exception {
         assertEquals(0, project.getExperiments().count());
-        Experiment e = new JPAExperiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        Experiment e = new Experiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
         project.addExperiment(e);
         assertEquals(1, project.getExperiments().count());
         assertEquals(e, project.getExperiments().findFirst().orElse(null));
