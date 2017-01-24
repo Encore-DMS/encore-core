@@ -1,6 +1,5 @@
 package io.github.encore_dms.util;
 
-import io.github.encore_dms.DataContext;
 import io.github.encore_dms.TransactionManager;
 import io.github.encore_dms.exceptions.EncoreException;
 

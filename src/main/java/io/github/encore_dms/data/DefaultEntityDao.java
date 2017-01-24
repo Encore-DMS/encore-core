@@ -15,9 +15,9 @@ public class DefaultEntityDao implements EntityDao {
     }
 
     @Override
-    public <T extends Entity> Stream<T> getAll(Class<T> entityType) {
+    public <T extends Entity> Stream<T> getAll(String entityName, Class<T> entityType) {
         Session session = entityManager.unwrap(Session.class);
-        return session.createQuery("SELECT e FROM " + entityType.getSimpleName() + " e", entityType).stream();
+        return session.createQuery("SELECT e FROM " + entityName + " e", entityType).stream();
     }
 
     @Override

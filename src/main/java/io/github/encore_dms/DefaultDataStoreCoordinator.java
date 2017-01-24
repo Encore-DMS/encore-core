@@ -1,5 +1,7 @@
 package io.github.encore_dms;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.data.DataStore;
 
 public class DefaultDataStoreCoordinator implements DataStoreCoordinator {
@@ -8,7 +10,8 @@ public class DefaultDataStoreCoordinator implements DataStoreCoordinator {
 
     private final DataContext.Factory dataContextFactory;
 
-    public DefaultDataStoreCoordinator(DataStore primaryDataStore, DataContext.Factory dataContextFactory) {
+    @Inject
+    public DefaultDataStoreCoordinator(@Assisted DataStore primaryDataStore, DataContext.Factory dataContextFactory) {
         this.primaryDataStore = primaryDataStore;
         this.dataContextFactory = dataContextFactory;
     }

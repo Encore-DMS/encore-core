@@ -1,6 +1,7 @@
 package io.github.encore_dms;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.data.DataStore;
 import io.github.encore_dms.domain.Entity;
 import io.github.encore_dms.domain.EntityRepository;
@@ -9,7 +10,6 @@ import io.github.encore_dms.domain.User;
 import io.github.encore_dms.util.TransactionUtilities;
 
 import java.time.ZonedDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class DefaultDataContext implements DataContext {
@@ -19,7 +19,7 @@ public class DefaultDataContext implements DataContext {
     private final TransactionManager transactionManager;
 
     @Inject
-    DefaultDataContext(DataStore dataStore, DataStoreCoordinator dataStoreCoordinator, EntityRepository.Factory entityRepositoryFactory) {
+    DefaultDataContext(@Assisted DataStore dataStore, @Assisted DataStoreCoordinator dataStoreCoordinator, EntityRepository.Factory entityRepositoryFactory) {
         this.dataStoreCoordinator = dataStoreCoordinator;
         this.entityRepository = entityRepositoryFactory.create(dataStore.getDao(), this);
         this.transactionManager = dataStore.getTransactionManager();
@@ -28,6 +28,11 @@ public class DefaultDataContext implements DataContext {
     @Override
     public EntityRepository getRepository() {
         return this.entityRepository;
+    }
+
+    @Override
+    public DataStoreCoordinator getCoordinator() {
+        return this.dataStoreCoordinator;
     }
 
     @Override

@@ -10,7 +10,6 @@ public abstract class AbstractIntegrationTest {
     public void setUp() {
 
 
-
     }
 
 }

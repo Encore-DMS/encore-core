@@ -13,6 +13,8 @@ public interface DataContext extends TransactionManager {
 
     EntityRepository getRepository();
 
+    DataStoreCoordinator getCoordinator();
+
     Stream<Project> getProjects();
 
     Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end);

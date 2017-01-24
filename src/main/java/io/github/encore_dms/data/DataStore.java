@@ -8,4 +8,8 @@ public interface DataStore {
 
     TransactionManager getTransactionManager();
 
+    interface Factory {
+        DataStore create(String url, String username, String password);
+    }
+
 }
