@@ -1,53 +1,82 @@
 package io.github.encore_dms.domain;
 
-import io.github.encore_dms.TestBase;
+import io.github.encore_dms.AbstractTest;
+import io.github.encore_dms.DataContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
 
-public class ProjectTest extends TestBase {
+public class ProjectTest extends AbstractTest {
 
     private Project project;
 
+    @Mock
+    private DataContext context;
+
     @BeforeEach
     public void setUp() throws Exception {
-        super.setUp();
+        MockitoAnnotations.initMocks(this);
+
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-25T11:12:13Z[GMT]");
         project = new Project(context, null, "test project", "testing purposes", start, end);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void setName() throws Exception {
         String name = "a new project name";
         assertNotEquals(project.getName(), name);
+
         project.setName(name);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
         assertEquals(project.getName(), name);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void setPurpose() throws Exception {
         String purpose = "a new project purpose";
         assertNotEquals(project.getPurpose(), purpose);
+
         project.setPurpose(purpose);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
         assertEquals(project.getPurpose(), purpose);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void insertExperiment() throws Exception {
         String purpose = "experimental testing";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T11:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T16:12:14Z[GMT]");
 
         Experiment e = project.insertExperiment(purpose, start, end);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
 
         assertEquals(purpose, e.getPurpose());
         assertEquals(start, e.getStartTime());
@@ -59,7 +88,7 @@ public class ProjectTest extends TestBase {
         assertEquals(project, projects.get(0));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getExperiments() throws Exception {
         List<Experiment> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -69,14 +98,14 @@ public class ProjectTest extends TestBase {
                 expected.add(e);
             }
         }
-        expected.sort((e1, e2) -> e1.getStartTime().compareTo(e2.getStartTime()));
+        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
 
         List<Experiment> actual = project.getExperiments().collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void addExperiment() throws Exception {
         assertEquals(0, project.getExperiments().count());
         Experiment e = new Experiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());

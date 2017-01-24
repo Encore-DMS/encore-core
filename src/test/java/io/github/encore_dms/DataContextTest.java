@@ -1,6 +1,13 @@
 package io.github.encore_dms;
 
+import io.github.encore_dms.data.DataStore;
+import io.github.encore_dms.domain.EntityRepository;
 import io.github.encore_dms.domain.Project;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -9,18 +16,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-public class DataContextTest extends TestBase {
+public class DataContextTest extends AbstractTest {
 
-    @org.junit.jupiter.api.Test
-    public void close() throws Exception {
-        assertTrue(context.isOpen());
-        context.close();
-        assertFalse(context.isOpen());
+    private DataContext context;
+
+    @Mock
+    private DataStore store;
+
+    @Mock
+    private TransactionManager transactionManager;
+
+    @Mock
+    private DataStoreCoordinator coordinator;
+
+    @Mock
+    private EntityRepository repository;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
+        when(store.getTransactionManager()).thenReturn(transactionManager);
+
+        EntityRepository.Factory factory = mock(EntityRepository.Factory.class);
+        when(factory.create(any(), any())).thenReturn(repository);
+
+        context = new DefaultDataContext(store, coordinator, factory);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void insertProject() throws Exception {
         String name = "test project";
         String purpose = "testing purposes";
@@ -29,13 +57,18 @@ public class DataContextTest extends TestBase {
 
         Project p = context.insertProject(name, purpose, start, end);
 
+        InOrder inOrder = inOrder(transactionManager, repository);
+        inOrder.verify(transactionManager, atLeastOnce()).beginTransaction();
+        inOrder.verify(repository).persist(p);
+        inOrder.verify(transactionManager, atLeastOnce()).commitTransaction();
+
         assertEquals(name, p.getName());
         assertEquals(purpose, p.getPurpose());
         assertEquals(start, p.getStartTime());
         assertEquals(end, p.getEndTime());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void getProjects() throws Exception {
         List<Project> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -45,7 +78,8 @@ public class DataContextTest extends TestBase {
                 expected.add(p);
             }
         }
-        expected.sort((p1, p2) -> p1.getStartTime().compareTo(p2.getStartTime()));
+
+        when(repository.getProjects()).thenReturn(expected.stream());
 
         List<Project> actual = context.getProjects().collect(Collectors.toList());
 

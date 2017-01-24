@@ -7,14 +7,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-abstract class AnnotatableEntityBase extends EntityBase implements Owned {
+abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned {
 
-    AnnotatableEntityBase(DataContext context, User owner) {
+    AbstractAnnotatableEntity(DataContext context, User owner) {
         super(context);
         this.owner = owner;
     }
 
-    protected AnnotatableEntityBase() {}
+    protected AbstractAnnotatableEntity() {
+    }
 
     @ManyToOne(targetEntity = User.class)
     private User owner;

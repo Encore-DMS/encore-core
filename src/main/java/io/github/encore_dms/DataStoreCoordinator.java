@@ -1,9 +1,9 @@
 package io.github.encore_dms;
 
-public class DataStoreCoordinator {
+import io.github.encore_dms.data.DataStore;
 
-    public DataContext getContext() {
-        return null;
-    }
+public interface DataStoreCoordinator {
+    DataContext getContext();
 
+    DataStore getPrimaryDataStore();
 }

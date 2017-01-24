@@ -6,10 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="info">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="org.hibernate.SQL" level="debug"/>
-        <Logger name="org.hibernate.type.descriptor.sql" level="trace"/>
+        <Logger name="org.hibernate" level="ERROR"/>
+        <!--<Logger name="org.hibernate.SQL" level="DEBUG"/>-->
+        <!--<Logger name="org.hibernate.type.descriptor.sql" level="TRACE"/>-->
     </Loggers>
 </Configuration>

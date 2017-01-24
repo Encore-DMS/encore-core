@@ -8,15 +8,16 @@ import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 @MappedSuperclass
-abstract class TimelineEntityBase extends AnnotatableEntityBase implements TimelineElement {
+abstract class AbstractTimelineEntity extends AbstractAnnotatableEntity implements TimelineElement {
 
-    TimelineEntityBase(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
+    AbstractTimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner);
         this.startTime = start;
         this.endTime = end;
     }
 
-    protected TimelineEntityBase() {}
+    protected AbstractTimelineEntity() {
+    }
 
     @Basic
     private ZonedDateTime startTime;

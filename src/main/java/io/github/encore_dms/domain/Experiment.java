@@ -7,12 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
-public class Experiment extends TimelineEntityBase {
+public class Experiment extends AbstractTimelineEntity {
 
     public Experiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
@@ -20,7 +21,8 @@ public class Experiment extends TimelineEntityBase {
         this.projects = new LinkedList<>();
     }
 
-    protected Experiment() {}
+    protected Experiment() {
+    }
 
     @Basic
     private String purpose;
@@ -45,7 +47,7 @@ public class Experiment extends TimelineEntityBase {
         transactionWrapped(() -> {
             if (!projects.contains(project)) {
                 projects.add(project);
-                projects.sort((p1, p2) -> p1.getStartTime().compareTo(p2.getStartTime()));
+                projects.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
                 project.addExperiment(this);
             }
         });
