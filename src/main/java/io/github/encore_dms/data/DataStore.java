@@ -1,5 +1,6 @@
 package io.github.encore_dms.data;
 
+import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.TransactionManager;
 
 public interface DataStore {
@@ -9,7 +10,7 @@ public interface DataStore {
     TransactionManager getTransactionManager();
 
     interface Factory {
-        DataStore create(String url, String username, String password);
+        DataStore create(@Assisted("host") String host, @Assisted("username") String username, @Assisted("password") String password);
     }
 
 }

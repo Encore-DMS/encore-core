@@ -11,6 +11,8 @@ public class EncoreModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(DataStoreCoordinator.Connection.class).to(DefaultDataStoreCoordinatorConnection.class);
+
         install(new FactoryModuleBuilder()
                 .implement(DataStoreCoordinator.class, DefaultDataStoreCoordinator.class)
                 .build(DataStoreCoordinator.Factory.class));

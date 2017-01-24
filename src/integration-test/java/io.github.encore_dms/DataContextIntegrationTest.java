@@ -8,7 +8,7 @@ public class DataContextIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void test() {
-        assertEquals(true, true);
+        DataStoreCoordinator coordinator = Encore.connect("localhost", "sa", "");
     }
 
 }

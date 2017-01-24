@@ -9,7 +9,7 @@ public interface DataStoreCoordinator {
     DataStore getPrimaryDataStore();
 
     interface Connection {
-        DataStoreCoordinator connect(String url, String username, String password);
+        DataStoreCoordinator connect(String host, String username, String password);
     }
 
     interface Factory {

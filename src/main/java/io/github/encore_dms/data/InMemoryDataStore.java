@@ -1,5 +1,7 @@
 package io.github.encore_dms.data;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.DefaultTransactionManager;
 import io.github.encore_dms.TransactionManager;
 
@@ -14,8 +16,9 @@ public class InMemoryDataStore extends AbstractDataStore {
     private final EntityDao dao;
     private final TransactionManager transactionManager;
 
-    public InMemoryDataStore() {
-        super("jdbc:h2:mem:default", "sa", "");
+    @Inject
+    public InMemoryDataStore(@Assisted("host") String host, @Assisted("username") String username, @Assisted("password") String password) {
+        super("jdbc:h2:mem:" + host, username, password);
 
         Map<String, String> properties = new HashMap<>();
         properties.put("javax.persistence.provider", "org.hibernate.jpa.HibernatePersistenceProvider");
