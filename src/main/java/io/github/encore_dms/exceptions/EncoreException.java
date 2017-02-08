@@ -6,4 +6,8 @@ public class EncoreException extends RuntimeException {
         super(s, t);
     }
 
+    public EncoreException(String s) {
+        super(s);
+    }
+
 }

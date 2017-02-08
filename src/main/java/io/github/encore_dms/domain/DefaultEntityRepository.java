@@ -20,11 +20,16 @@ public class DefaultEntityRepository implements EntityRepository {
 
     @Override
     public Stream<Project> getProjects() {
-        return dao.getAll(Project.class.getSimpleName(), Project.class);
+        return dao.getAll(Project.class);
     }
 
     @Override
     public void persist(Entity entity) {
         dao.persist(entity);
+    }
+
+    @Override
+    public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
+        return dao.query(qlString, resultClass);
     }
 }

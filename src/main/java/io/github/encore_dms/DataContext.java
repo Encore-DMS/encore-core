@@ -1,5 +1,6 @@
 package io.github.encore_dms;
 
+import com.physion.ebuilder.expression.ExpressionTree;
 import io.github.encore_dms.data.DataStore;
 import io.github.encore_dms.domain.Entity;
 import io.github.encore_dms.domain.EntityRepository;
@@ -10,6 +11,10 @@ import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
 public interface DataContext extends TransactionManager {
+
+    <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);
+
+    <T extends Entity> Stream<T> query(ExpressionTree expressionTree);
 
     EntityRepository getRepository();
 

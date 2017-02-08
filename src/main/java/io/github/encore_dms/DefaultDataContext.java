@@ -2,11 +2,15 @@ package io.github.encore_dms;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.physion.ebuilder.expression.ExpressionTree;
+import com.physion.ebuilder.expression.IExpression;
 import io.github.encore_dms.data.DataStore;
 import io.github.encore_dms.domain.Entity;
 import io.github.encore_dms.domain.EntityRepository;
 import io.github.encore_dms.domain.Project;
 import io.github.encore_dms.domain.User;
+import io.github.encore_dms.exceptions.EncoreException;
+import io.github.encore_dms.util.ExpressionUtilities;
 import io.github.encore_dms.util.TransactionUtilities;
 
 import java.time.ZonedDateTime;
@@ -23,6 +27,22 @@ public class DefaultDataContext implements DataContext {
         this.dataStoreCoordinator = dataStoreCoordinator;
         this.entityRepository = entityRepositoryFactory.create(dataStore.getDao(), this);
         this.transactionManager = dataStore.getTransactionManager();
+    }
+
+    @Override
+    public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
+        return getRepository().query(qlString, null);
+    }
+
+    @Override
+    public <T extends Entity> Stream<T> query(ExpressionTree expressionTree) {
+        String entityName = expressionTree.getClassUnderQualification();
+        IExpression expression = expressionTree.getRootExpression();
+        try {
+            return query(ExpressionUtilities.generateSql(expression), (Class<T>) Class.forName(entityName));
+        } catch (ClassNotFoundException e) {
+            throw new EncoreException(entityName + " does not exist in Encore database.");
+        }
     }
 
     @Override

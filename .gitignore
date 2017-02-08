@@ -99,3 +99,5 @@ gradle-app.setting
 ### IntelliJ ###
 .idea
 *.iml
+
+out

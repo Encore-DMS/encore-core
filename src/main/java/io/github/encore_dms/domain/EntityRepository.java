@@ -11,6 +11,8 @@ public interface EntityRepository {
 
     void persist(Entity entity);
 
+    <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);
+
     interface Factory {
         EntityRepository create(EntityDao dao, DataContext context);
     }
