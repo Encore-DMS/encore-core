@@ -14,7 +14,7 @@ public class ExpressionUtilitiesTest extends AbstractTest {
     @Test
     public void generateJpqlWithSinglePredicate() {
         IOperatorExpression exclude = new OperatorExpression("=", Stream.of(
-                new AttributeExpression("excludeFromAnalysis"),
+                new AttributeExpression("exclude"),
                 new BooleanLiteralValueExpression(false))
                 .collect(Collectors.toList()));
 
@@ -22,7 +22,7 @@ public class ExpressionUtilitiesTest extends AbstractTest {
                 exclude)
                 .collect(Collectors.toList()));
 
-        assertEquals("excludeFromAnalysis = 0", ExpressionUtilities.generateJpql(root));
+        assertEquals("exclude = 0", ExpressionUtilities.generateJpql(root));
     }
 
     @Test
@@ -155,5 +155,96 @@ public class ExpressionUtilitiesTest extends AbstractTest {
                 .collect(Collectors.toList()));
 
         assertEquals("e1 = 7 AND (e2_1 = 5 OR e2_2 = 6 OR (e2_3_1 = 3 AND (e2_3_2_1 = 2 OR e2_3_2_2 = 1)) OR e2_4 = 8)", ExpressionUtilities.generateJpql(root));
+    }
+
+    @Test
+    public void generateJpqlWithRelationship() {
+        IOperatorExpression relation = new OperatorExpression(".", Stream.of(
+                new AttributeExpression("object"),
+                new AttributeExpression("label"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression label = new OperatorExpression("=", Stream.of(
+                relation,
+                new StringLiteralValueExpression("string value"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression root = new OperatorExpression("and", Stream.of(
+                label)
+                .collect(Collectors.toList()));
+
+        assertEquals("object.label = 'string value'", ExpressionUtilities.generateJpql(root));
+    }
+
+    @Test
+    public void generateJpqlWithDeepRelationship() {
+        IOperatorExpression relation1 = new OperatorExpression(".", Stream.of(
+                new AttributeExpression("object1"),
+                new AttributeExpression("object2"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression relation2 = new OperatorExpression(".", Stream.of(
+                relation1,
+                new AttributeExpression("object3"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression relation3 = new OperatorExpression(".", Stream.of(
+                relation2,
+                new AttributeExpression("label"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression label = new OperatorExpression("=", Stream.of(
+                relation3,
+                new StringLiteralValueExpression("string value"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression root = new OperatorExpression("and", Stream.of(
+                label)
+                .collect(Collectors.toList()));
+
+        assertEquals("object1.object2.object3.label = 'string value'", ExpressionUtilities.generateJpql(root));
+    }
+
+    @Test
+    public void generateJpqlWithNestedDeepRelationship() {
+        IOperatorExpression e1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e1"),
+                new Int32LiteralValueExpression(7))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_1"),
+                new Int32LiteralValueExpression(5))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression relation1 = new OperatorExpression(".", Stream.of(
+                new AttributeExpression("e2_2-1"),
+                new AttributeExpression("e2_2-2"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression relation2 = new OperatorExpression(".", Stream.of(
+                relation1,
+                new AttributeExpression("e2_2-3"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression relation3 = new OperatorExpression(".", Stream.of(
+                relation2,
+                new AttributeExpression("label"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_2 = new OperatorExpression("=", Stream.of(
+                relation3,
+                new StringLiteralValueExpression("string value"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2 = new OperatorExpression("and", Stream.of(
+                e2_1, e2_2)
+                .collect(Collectors.toList()));
+
+        IOperatorExpression root = new OperatorExpression("and", Stream.of(
+                e1, e2)
+                .collect(Collectors.toList()));
+
+        assertEquals("e1 = 7 AND (e2_1 = 5 AND e2_2-1.e2_2-2.e2_2-3.label = 'string value')", ExpressionUtilities.generateJpql(root));
     }
 }

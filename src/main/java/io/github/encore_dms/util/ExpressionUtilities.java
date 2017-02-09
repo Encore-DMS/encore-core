@@ -7,8 +7,7 @@ import java.util.*;
 
 public class ExpressionUtilities {
 
-    private static final List<String> operatorHoistsSingletonOperands = Arrays.asList("AND", "OR");
-    private static final List<String> operatorRequiresInfix = Collections.singletonList(".");
+    private static final String navigationOperator = ".";
 
     public static String generateJpql(IExpression expression) {
         return expressionJpql(expression);
@@ -31,14 +30,21 @@ public class ExpressionUtilities {
 
         for (IExpression operand :
                 expression.getOperandList()) {
-            if (operand instanceof IOperatorExpression && ((IOperatorExpression) operand).getOperandList().get(0) instanceof IOperatorExpression) {
-                expressions.add("(" + expressionJpql((IOperatorExpression) operand) + ")");
-            } else {
-                expressions.add(expressionJpql(operand));
-            }
+
+            boolean isCompound = operand instanceof IOperatorExpression
+                    && !((IOperatorExpression) operand).getOperandList().isEmpty()
+                    && ((IOperatorExpression) operand).getOperandList().get(0) instanceof IOperatorExpression
+                    && !((IOperatorExpression) ((IOperatorExpression) operand).getOperandList().get(0)).getOperatorName().equals(navigationOperator);
+
+            String openBrace = isCompound ? "(" : "";
+            String closeBrace = isCompound ? ")" : "";
+
+            expressions.add(openBrace + expressionJpql(operand) + closeBrace);
         }
 
-        return String.join(" " + expression.getOperatorName().toUpperCase() + " ", expressions);
+        String space = expression.getOperatorName().equals(navigationOperator) ? "" : " ";
+
+        return String.join(space + expression.getOperatorName().toUpperCase() + space, expressions);
     }
 
     private static String expressionJpql(IAttributeExpression expression) {
