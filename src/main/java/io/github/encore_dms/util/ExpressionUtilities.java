@@ -7,98 +7,87 @@ import java.util.*;
 
 public class ExpressionUtilities {
 
-    private static final Map<String, String> operatorMap = createOperatorMap();
-    private static Map<String, String> createOperatorMap() {
-        Map<String, String> m = new HashMap<>();
-        m.put("==", "=");
-        return m;
-    }
-
     private static final List<String> operatorHoistsSingletonOperands = Arrays.asList("AND", "OR");
     private static final List<String> operatorRequiresInfix = Collections.singletonList(".");
 
-    public static String generateSql(IExpression expression) {
-        return expressionSql(expression);
+    public static String generateJpql(IExpression expression) {
+        return expressionJpql(expression);
     }
 
-    private static String expressionSql(IExpression expression) {
+    private static String expressionJpql(IExpression expression) {
         if (expression instanceof IOperatorExpression) {
-            return expressionSql((IOperatorExpression) expression);
+            return expressionJpql((IOperatorExpression) expression);
         } else if (expression instanceof IAttributeExpression) {
-            return expressionSql((IAttributeExpression) expression);
+            return expressionJpql((IAttributeExpression) expression);
         } else if (expression instanceof ILiteralValueExpression) {
-            return expressionSql((ILiteralValueExpression) expression);
+            return expressionJpql((ILiteralValueExpression) expression);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
-    private static String expressionSql(IOperatorExpression expression) {
-        int numOperands = expression.getOperandList().size();
+    private static String expressionJpql(IOperatorExpression expression) {
+        List<String> expressions = new ArrayList<>();
 
-        String operatorName = operatorMap.containsKey(expression.getOperatorName())
-                ? operatorMap.get(expression.getOperatorName())
-                : expression.getOperatorName();
-
-        if (operatorHoistsSingletonOperands.contains(operatorName.toUpperCase()) && numOperands == 1) {
-            return expressionSql(expression.getOperandList().get(0));
-        } else {
-            List<String> expressions = new ArrayList<>();
-            for (IExpression operand :
-                    expression.getOperandList()) {
-                expressions.add(expressionSql(operand));
+        for (IExpression operand :
+                expression.getOperandList()) {
+            if (operand instanceof IOperatorExpression && ((IOperatorExpression) operand).getOperandList().get(0) instanceof IOperatorExpression) {
+                expressions.add("(" + expressionJpql((IOperatorExpression) operand) + ")");
+            } else {
+                expressions.add(expressionJpql(operand));
             }
-            return String.join(" " + operatorName.toUpperCase() + " ", expressions);
         }
+
+        return String.join(" " + expression.getOperatorName().toUpperCase() + " ", expressions);
     }
 
-    private static String expressionSql(IAttributeExpression expression) {
+    private static String expressionJpql(IAttributeExpression expression) {
         return expression.getAttributeName();
     }
 
-    private static String expressionSql(ILiteralValueExpression expression) {
-        return valueExpressionSql(expression);
+    private static String expressionJpql(ILiteralValueExpression expression) {
+        return valueExpressionJpql(expression);
     }
 
-    private static String valueExpressionSql(ILiteralValueExpression expression) {
+    private static String valueExpressionJpql(ILiteralValueExpression expression) {
         if (expression instanceof IBooleanLiteralValueExpression) {
-            return valueExpressionSql((IBooleanLiteralValueExpression) expression);
+            return valueExpressionJpql((IBooleanLiteralValueExpression) expression);
         } else if (expression instanceof IInt32LiteralValueExpression) {
-            return valueExpressionSql((IInt32LiteralValueExpression) expression);
+            return valueExpressionJpql((IInt32LiteralValueExpression) expression);
         } else if (expression instanceof IFloat64LiteralValueExpression) {
-            return valueExpressionSql((IFloat64LiteralValueExpression) expression);
+            return valueExpressionJpql((IFloat64LiteralValueExpression) expression);
         } else if (expression instanceof IStringLiteralValueExpression) {
-            return valueExpressionSql((IStringLiteralValueExpression) expression);
+            return valueExpressionJpql((IStringLiteralValueExpression) expression);
         } else if (expression instanceof IClassLiteralValueExpression) {
-            return valueExpressionSql((IClassLiteralValueExpression) expression);
+            return valueExpressionJpql((IClassLiteralValueExpression) expression);
         } else if (expression instanceof ITimeLiteralValueExpression) {
-            return valueExpressionSql((ITimeLiteralValueExpression) expression);
+            return valueExpressionJpql((ITimeLiteralValueExpression) expression);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
-    private static String valueExpressionSql(IBooleanLiteralValueExpression expression) {
+    private static String valueExpressionJpql(IBooleanLiteralValueExpression expression) {
         return (Boolean) expression.getValue() ? "1" : "0";
     }
 
-    private static String valueExpressionSql(IInt32LiteralValueExpression expression) {
+    private static String valueExpressionJpql(IInt32LiteralValueExpression expression) {
         return Integer.toString((Integer) expression.getValue());
     }
 
-    private static String valueExpressionSql(IFloat64LiteralValueExpression expression) {
+    private static String valueExpressionJpql(IFloat64LiteralValueExpression expression) {
         return Double.toString((Double) expression.getValue());
     }
 
-    private static String valueExpressionSql(IStringLiteralValueExpression expression) {
+    private static String valueExpressionJpql(IStringLiteralValueExpression expression) {
         return "'" + expression.getValue() + "'";
     }
 
-    private static String valueExpressionSql(IClassLiteralValueExpression expression) {
+    private static String valueExpressionJpql(IClassLiteralValueExpression expression) {
         throw new NotYetImplementedException();
     }
 
-    private static String valueExpressionSql(ITimeLiteralValueExpression expression) {
+    private static String valueExpressionJpql(ITimeLiteralValueExpression expression) {
         throw new NotYetImplementedException();
     }
 }

@@ -39,7 +39,7 @@ public class DefaultDataContext implements DataContext {
         String entityName = expressionTree.getClassUnderQualification();
         IExpression expression = expressionTree.getRootExpression();
         try {
-            return query(ExpressionUtilities.generateSql(expression), (Class<T>) Class.forName(entityName));
+            return query(ExpressionUtilities.generateJpql(expression), (Class<T>) Class.forName(entityName));
         } catch (ClassNotFoundException e) {
             throw new EncoreException(entityName + " does not exist in Encore database.");
         }

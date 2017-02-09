@@ -4,8 +4,6 @@ import com.physion.ebuilder.expression.*;
 import io.github.encore_dms.AbstractTest;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ExpressionUtilitiesTest extends AbstractTest {
 
     @Test
-    public void generateSqlWithSinglePredicate() {
-        IOperatorExpression exclude = new OperatorExpression("==", Stream.of(
+    public void generateJpqlWithSinglePredicate() {
+        IOperatorExpression exclude = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("excludeFromAnalysis"),
                 new BooleanLiteralValueExpression(false))
                 .collect(Collectors.toList()));
@@ -24,27 +22,27 @@ public class ExpressionUtilitiesTest extends AbstractTest {
                 exclude)
                 .collect(Collectors.toList()));
 
-        assertEquals("excludeFromAnalysis = 0", ExpressionUtilities.generateSql(root));
+        assertEquals("excludeFromAnalysis = 0", ExpressionUtilities.generateJpql(root));
     }
 
     @Test
-    public void generateSqlWithDifferentValueTypes() {
-        IOperatorExpression e1 = new OperatorExpression("==", Stream.of(
+    public void generateJpqlWithDifferentValueTypes() {
+        IOperatorExpression e1 = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("boolean"),
                 new BooleanLiteralValueExpression(true))
                 .collect(Collectors.toList()));
 
-        IOperatorExpression e2 = new OperatorExpression("==", Stream.of(
+        IOperatorExpression e2 = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("int32"),
                 new Int32LiteralValueExpression(5))
                 .collect(Collectors.toList()));
 
-        IOperatorExpression e3 = new OperatorExpression("==", Stream.of(
+        IOperatorExpression e3 = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("float64"),
                 new Float64LiteralValueExpression(6.78))
                 .collect(Collectors.toList()));
 
-        IOperatorExpression e4 = new OperatorExpression("==", Stream.of(
+        IOperatorExpression e4 = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("string"),
                 new StringLiteralValueExpression("string value"))
                 .collect(Collectors.toList()));
@@ -53,12 +51,12 @@ public class ExpressionUtilitiesTest extends AbstractTest {
                 e1, e2, e3, e4)
                 .collect(Collectors.toList()));
 
-        assertEquals("boolean = 1 AND int32 = 5 AND float64 = 6.78 AND string = 'string value'", ExpressionUtilities.generateSql(root));
+        assertEquals("boolean = 1 AND int32 = 5 AND float64 = 6.78 AND string = 'string value'", ExpressionUtilities.generateJpql(root));
     }
 
     @Test
-    public void generateSqlWithDifferentOperators() {
-        IOperatorExpression e1 = new OperatorExpression("==", Stream.of(
+    public void generateJpqlWithDifferentOperators() {
+        IOperatorExpression e1 = new OperatorExpression("=", Stream.of(
                 new AttributeExpression("e1"),
                 new StringLiteralValueExpression("equality"))
                 .collect(Collectors.toList()));
@@ -72,7 +70,90 @@ public class ExpressionUtilitiesTest extends AbstractTest {
                 e1, e2)
                 .collect(Collectors.toList()));
 
-        assertEquals("e1 = 'equality' AND e2 != 'inequality'", ExpressionUtilities.generateSql(root));
+        assertEquals("e1 = 'equality' AND e2 != 'inequality'", ExpressionUtilities.generateJpql(root));
     }
 
+    @Test
+    public void generateJpqlWithGroup() {
+        IOperatorExpression e1_1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e1_1"),
+                new StringLiteralValueExpression("inner1"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e1_2 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e1_2"),
+                new StringLiteralValueExpression("inner2"))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e1 = new OperatorExpression("or", Stream.of(
+                e1_1, e1_2)
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2"),
+                new Int32LiteralValueExpression(7))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression root = new OperatorExpression("and", Stream.of(
+                e1, e2)
+                .collect(Collectors.toList()));
+
+        assertEquals("(e1_1 = 'inner1' OR e1_2 = 'inner2') AND e2 = 7", ExpressionUtilities.generateJpql(root));
+    }
+
+    @Test
+    public void generateJpqlWithNestedGroups() {
+        IOperatorExpression e1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e1"),
+                new Int32LiteralValueExpression(7))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_1"),
+                new Int32LiteralValueExpression(5))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_2 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_2"),
+                new Int32LiteralValueExpression(6))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_3_1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_3_1"),
+                new Int32LiteralValueExpression(3))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_3_2_1 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_3_2_1"),
+                new Int32LiteralValueExpression(2))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_3_2_2 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_3_2_2"),
+                new Int32LiteralValueExpression(1))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_3_2 = new OperatorExpression("or", Stream.of(
+                e2_3_2_1, e2_3_2_2)
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_3 = new OperatorExpression("and", Stream.of(
+                e2_3_1, e2_3_2)
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2_4 = new OperatorExpression("=", Stream.of(
+                new AttributeExpression("e2_4"),
+                new Int32LiteralValueExpression(8))
+                .collect(Collectors.toList()));
+
+        IOperatorExpression e2 = new OperatorExpression("or", Stream.of(
+                e2_1, e2_2, e2_3, e2_4)
+                .collect(Collectors.toList()));
+
+        IOperatorExpression root = new OperatorExpression("and", Stream.of(
+                e1, e2)
+                .collect(Collectors.toList()));
+
+        assertEquals("e1 = 7 AND (e2_1 = 5 OR e2_2 = 6 OR (e2_3_1 = 3 AND (e2_3_2_1 = 2 OR e2_3_2_2 = 1)) OR e2_4 = 8)", ExpressionUtilities.generateJpql(root));
+    }
 }
