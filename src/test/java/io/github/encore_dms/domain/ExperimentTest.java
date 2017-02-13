@@ -29,16 +29,16 @@ public class ExperimentTest extends AbstractTest {
     private DataContext context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-06-30T17:12:13Z[GMT]");
-        experiment = new Experiment(context, null, "experimental testing", start, end);
+        experiment = new Experiment(context, null, null, "experimental testing", start, end);
     }
 
     @Test
-    public void setPurpose() throws Exception {
+    public void setPurpose() {
         String purpose = "a new experiment purpose";
         assertNotEquals(experiment.getPurpose(), purpose);
 
@@ -52,7 +52,7 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
-    public void getProjects() throws Exception {
+    public void getProjects() {
         List<Project> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             for (int k = 0; k < 5; k++) {
@@ -70,13 +70,48 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
-    public void addProject() throws Exception {
+    public void addProject() {
         assertEquals(0, experiment.getProjects().count());
         Project p = new Project(context, null, "name", "purpose", ZonedDateTime.now(), ZonedDateTime.now());
         experiment.addProject(p);
         assertEquals(1, experiment.getProjects().count());
         assertEquals(p, experiment.getProjects().findFirst().orElse(null));
         assertEquals(experiment, p.getExperiments().findFirst().orElse(null));
+    }
+
+    @Test
+    public void insertEpochGroup() {
+        String label = "epoch group";
+        ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
+        ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
+
+        EpochGroup g = experiment.insertEpochGroup(label, start, end);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(label, g.getLabel());
+        assertEquals(start, g.getStartTime());
+        assertEquals(end, g.getEndTime());
+        assertEquals(experiment, g.getExperiment());
+    }
+
+    @Test
+    public void getEpochGroups() {
+        List<EpochGroup> expected = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                EpochGroup g = experiment.insertEpochGroup("label" + (i * 5 + k), time, time.plusMinutes(i));
+                expected.add(g);
+            }
+        }
+        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+
+        List<EpochGroup> actual = experiment.getEpochGroups().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
     }
 
 }

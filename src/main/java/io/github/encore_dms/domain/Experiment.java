@@ -2,11 +2,10 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.Basic;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +14,14 @@ import java.util.stream.Stream;
 @Entity
 public class Experiment extends AbstractTimelineEntity {
 
-    public Experiment(DataContext context, User owner, String purpose, ZonedDateTime start, ZonedDateTime end) {
+    public Experiment(DataContext context, User owner, Project project, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
-        this.purpose = purpose;
         this.projects = new LinkedList<>();
+        if (project != null) {
+            this.projects.add(project);
+        }
+        this.purpose = purpose;
+        this.epochGroups = new LinkedList<>();
     }
 
     protected Experiment() {
@@ -53,4 +56,22 @@ public class Experiment extends AbstractTimelineEntity {
         });
     }
 
+    @OneToMany(mappedBy = "experiment")
+    @OrderBy("startTime ASC")
+    private List<EpochGroup> epochGroups;
+
+    public Stream<EpochGroup> getEpochGroups() {
+        return epochGroups.stream();
+    }
+
+    public EpochGroup insertEpochGroup(String label, ZonedDateTime start, ZonedDateTime end) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, label, start, end);
+            epochGroups.add(g);
+            epochGroups.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+            c.insertEntity(g);
+            return g;
+        });
+    }
 }

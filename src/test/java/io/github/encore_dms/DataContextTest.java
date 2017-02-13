@@ -37,7 +37,7 @@ public class DataContextTest extends AbstractTest {
     private EntityRepository repository;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         when(store.getTransactionManager()).thenReturn(transactionManager);
@@ -49,7 +49,7 @@ public class DataContextTest extends AbstractTest {
     }
 
     @Test
-    public void insertProject() throws Exception {
+    public void insertProject() {
         String name = "test project";
         String purpose = "testing purposes";
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
@@ -69,7 +69,7 @@ public class DataContextTest extends AbstractTest {
     }
 
     @Test
-    public void getProjects() throws Exception {
+    public void getProjects() {
         List<Project> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             for (int k = 0; k < 5; k++) {

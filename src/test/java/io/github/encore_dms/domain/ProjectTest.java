@@ -29,7 +29,7 @@ public class ProjectTest extends AbstractTest {
     private DataContext context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         ZonedDateTime start = ZonedDateTime.parse("2016-06-30T12:30:40Z[GMT]");
@@ -38,7 +38,7 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
-    public void setName() throws Exception {
+    public void setName() {
         String name = "a new project name";
         assertNotEquals(project.getName(), name);
 
@@ -52,7 +52,7 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
-    public void setPurpose() throws Exception {
+    public void setPurpose() {
         String purpose = "a new project purpose";
         assertNotEquals(project.getPurpose(), purpose);
 
@@ -66,7 +66,7 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
-    public void insertExperiment() throws Exception {
+    public void insertExperiment() {
         String purpose = "experimental testing";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T11:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T16:12:14Z[GMT]");
@@ -88,7 +88,7 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
-    public void getExperiments() throws Exception {
+    public void getExperiments() {
         List<Experiment> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             for (int k = 0; k < 5; k++) {
@@ -105,9 +105,9 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
-    public void addExperiment() throws Exception {
+    public void addExperiment() {
         assertEquals(0, project.getExperiments().count());
-        Experiment e = new Experiment(context, null, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        Experiment e = new Experiment(context, null, project, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
         project.addExperiment(e);
         assertEquals(1, project.getExperiments().count());
         assertEquals(e, project.getExperiments().findFirst().orElse(null));

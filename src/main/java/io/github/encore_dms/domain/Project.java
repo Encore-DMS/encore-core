@@ -47,7 +47,7 @@ public class Project extends AbstractTimelineEntity {
         transactionWrapped((Runnable) () -> this.purpose = purpose);
     }
 
-    @ManyToMany(targetEntity = Experiment.class)
+    @ManyToMany
     @OrderBy("startTime ASC")
     private List<Experiment> experiments;
 
@@ -58,8 +58,9 @@ public class Project extends AbstractTimelineEntity {
     public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Experiment e = new Experiment(c, c.getAuthenticatedUser(), purpose, start, end);
-            addExperiment(e);
+            Experiment e = new Experiment(c, c.getAuthenticatedUser(), this, purpose, start, end);
+            experiments.add(e);
+            experiments.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             c.insertEntity(e);
             return e;
         });
