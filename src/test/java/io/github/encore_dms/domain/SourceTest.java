@@ -8,16 +8,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 
-public class EpochGroupTest extends AbstractTest {
+public class SourceTest extends AbstractTest {
 
-    private EpochGroup group;
+    private Source source;
 
     @Mock
     private DataContext context;
@@ -26,23 +24,21 @@ public class EpochGroupTest extends AbstractTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
-        ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
-        group = new EpochGroup(context, null, null, null, "group label", start, end);
+        source = new Source(context, null, null, "source label");
     }
 
     @Test
     public void setLabel() {
         String label = "a new label";
-        assertNotEquals(group.getLabel(), label);
+        assertNotEquals(source.getLabel(), label);
 
-        group.setLabel(label);
+        source.setLabel(label);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
         inOrder.verify(context, atLeastOnce()).commitTransaction();
 
-        assertEquals(group.getLabel(), label);
+        assertEquals(source.getLabel(), label);
     }
 
 }

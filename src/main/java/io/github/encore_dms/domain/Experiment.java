@@ -64,10 +64,10 @@ public class Experiment extends AbstractTimelineEntity {
         return epochGroups.stream();
     }
 
-    public EpochGroup insertEpochGroup(String label, ZonedDateTime start, ZonedDateTime end) {
+    public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, label, start, end);
+            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, source, label, start, end);
             epochGroups.add(g);
             epochGroups.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             c.insertEntity(g);

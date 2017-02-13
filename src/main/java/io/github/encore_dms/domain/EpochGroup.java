@@ -10,13 +10,28 @@ import java.time.ZonedDateTime;
 @Entity
 public class EpochGroup extends AbstractTimelineEntity {
 
-    public EpochGroup(DataContext context, User owner, Experiment experiment, String label, ZonedDateTime start, ZonedDateTime end) {
+    public EpochGroup(DataContext context, User owner, Experiment experiment, Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.experiment = experiment;
+        this.source = source;
         this.label = label;
     }
 
     protected EpochGroup() {
+    }
+
+    @ManyToOne
+    private Experiment experiment;
+
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
+    @ManyToOne
+    private Source source;
+
+    public Source getSource() {
+        return source;
     }
 
     @Basic
@@ -28,13 +43,6 @@ public class EpochGroup extends AbstractTimelineEntity {
 
     public void setLabel(String label) {
         transactionWrapped((Runnable) () -> this.label = label);
-    }
-
-    @ManyToOne
-    private Experiment experiment;
-
-    public Experiment getExperiment() {
-        return experiment;
     }
 
 }
