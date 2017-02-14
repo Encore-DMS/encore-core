@@ -88,6 +88,16 @@ public class ProjectTest extends AbstractTest {
     }
 
     @Test
+    public void addExperiment() {
+        assertEquals(0, project.getExperiments().count());
+        Experiment e = new Experiment(context, null, project, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
+        project.addExperiment(e);
+        assertEquals(1, project.getExperiments().count());
+        assertEquals(e, project.getExperiments().findFirst().orElse(null));
+        assertEquals(project, e.getProjects().findFirst().orElse(null));
+    }
+
+    @Test
     public void getExperiments() {
         List<Experiment> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -102,16 +112,6 @@ public class ProjectTest extends AbstractTest {
         List<Experiment> actual = project.getExperiments().collect(Collectors.toList());
 
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void addExperiment() {
-        assertEquals(0, project.getExperiments().count());
-        Experiment e = new Experiment(context, null, project, "purpose", ZonedDateTime.now(), ZonedDateTime.now());
-        project.addExperiment(e);
-        assertEquals(1, project.getExperiments().count());
-        assertEquals(e, project.getExperiments().findFirst().orElse(null));
-        assertEquals(project, e.getProjects().findFirst().orElse(null));
     }
 
 }

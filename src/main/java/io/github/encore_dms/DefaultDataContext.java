@@ -56,17 +56,17 @@ public class DefaultDataContext implements DataContext {
     }
 
     @Override
-    public Stream<Project> getProjects() {
-        return getRepository().getProjects();
-    }
-
-    @Override
     public Project insertProject(String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
         return TransactionUtilities.transactionWrapped(this, () -> {
             Project p = new Project(DefaultDataContext.this, getAuthenticatedUser(), name, purpose, start, end);
             insertEntity(p);
             return p;
         });
+    }
+
+    @Override
+    public Stream<Project> getProjects() {
+        return getRepository().getProjects();
     }
 
     @Override

@@ -51,10 +51,6 @@ public class Project extends AbstractTimelineEntity {
     @OrderBy("startTime ASC")
     private List<Experiment> experiments;
 
-    public Stream<Experiment> getExperiments() {
-        return experiments.stream();
-    }
-
     public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
@@ -74,6 +70,10 @@ public class Project extends AbstractTimelineEntity {
                 experiment.addProject(this);
             }
         });
+    }
+
+    public Stream<Experiment> getExperiments() {
+        return experiments.stream();
     }
 
 }

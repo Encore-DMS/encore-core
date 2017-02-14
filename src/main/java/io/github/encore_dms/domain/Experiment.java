@@ -21,6 +21,7 @@ public class Experiment extends AbstractTimelineEntity {
             this.projects.add(project);
         }
         this.purpose = purpose;
+        this.sources = new LinkedList<>();
         this.epochGroups = new LinkedList<>();
     }
 
@@ -38,13 +39,9 @@ public class Experiment extends AbstractTimelineEntity {
         transactionWrapped((Runnable) () -> this.purpose = purpose);
     }
 
-    @ManyToMany(targetEntity = Project.class, mappedBy = "experiments")
+    @ManyToMany(mappedBy = "experiments")
     @OrderBy("startTime ASC")
     private List<Project> projects;
-
-    public Stream<Project> getProjects() {
-        return projects.stream();
-    }
 
     public void addProject(Project project) {
         transactionWrapped(() -> {
@@ -56,13 +53,20 @@ public class Experiment extends AbstractTimelineEntity {
         });
     }
 
+    public Stream<Project> getProjects() {
+        return projects.stream();
+    }
+
+    @OneToMany(mappedBy = "parent")
+    private List<Source> sources;
+
+    public Stream<Source> getSources() {
+        return sources.stream();
+    }
+
     @OneToMany(mappedBy = "experiment")
     @OrderBy("startTime ASC")
     private List<EpochGroup> epochGroups;
-
-    public Stream<EpochGroup> getEpochGroups() {
-        return epochGroups.stream();
-    }
 
     public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
@@ -74,4 +78,9 @@ public class Experiment extends AbstractTimelineEntity {
             return g;
         });
     }
+
+    public Stream<EpochGroup> getEpochGroups() {
+        return epochGroups.stream();
+    }
+
 }
