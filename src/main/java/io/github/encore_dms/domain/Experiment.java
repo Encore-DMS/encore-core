@@ -57,8 +57,18 @@ public class Experiment extends AbstractTimelineEntity {
         return projects.stream();
     }
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "experiment")
     private List<Source> sources;
+
+    public Source insertSource(String label) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Source s = new Source(c, c.getAuthenticatedUser(), this, label);
+            c.insertEntity(s);
+            sources.add(s);
+            return s;
+        });
+    }
 
     public Stream<Source> getSources() {
         return sources.stream();
@@ -72,9 +82,9 @@ public class Experiment extends AbstractTimelineEntity {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
             EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, source, label, start, end);
+            c.insertEntity(g);
             epochGroups.add(g);
             epochGroups.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
-            c.insertEntity(g);
             return g;
         });
     }

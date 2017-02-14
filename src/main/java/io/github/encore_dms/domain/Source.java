@@ -9,9 +9,9 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Source extends AbstractAnnotatableEntity {
 
-    public Source(DataContext context, User owner, Source parent, String label) {
+    public Source(DataContext context, User owner, Experiment experiment, String label) {
         super(context, owner);
-        this.parent = parent;
+        this.experiment = experiment;
         this.label = label;
     }
 
@@ -19,10 +19,10 @@ public class Source extends AbstractAnnotatableEntity {
     }
 
     @ManyToOne
-    private Source parent;
+    private Experiment experiment;
 
-    public Source getParent() {
-        return parent;
+    public Experiment getExperiment() {
+        return experiment;
     }
 
     @Basic

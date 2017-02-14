@@ -80,6 +80,33 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
+    public void insertSource() {
+        String label = "source";
+
+        Source s = experiment.insertSource(label);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(label, s.getLabel());
+        assertEquals(experiment, s.getExperiment());
+    }
+
+    @Test
+    public void getSources() {
+        List<Source> expected = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Source s = experiment.insertSource("label" + i);
+            expected.add(s);
+        }
+
+        List<Source> actual = experiment.getSources().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void insertEpochGroup() {
         Source source = new Source(context, null, null, "source label");
         String label = "epoch group";

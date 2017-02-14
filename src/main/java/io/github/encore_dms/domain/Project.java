@@ -55,9 +55,9 @@ public class Project extends AbstractTimelineEntity {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
             Experiment e = new Experiment(c, c.getAuthenticatedUser(), this, purpose, start, end);
+            c.insertEntity(e);
             experiments.add(e);
             experiments.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
-            c.insertEntity(e);
             return e;
         });
     }
