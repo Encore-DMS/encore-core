@@ -63,7 +63,7 @@ public class Experiment extends AbstractTimelineEntity {
     public Source insertSource(String label) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Source s = new Source(c, c.getAuthenticatedUser(), this, label);
+            Source s = new Source(c, c.getAuthenticatedUser(), this, null, label);
             c.insertEntity(s);
             sources.add(s);
             return s;

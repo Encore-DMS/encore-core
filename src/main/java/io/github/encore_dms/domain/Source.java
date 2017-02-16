@@ -5,14 +5,20 @@ import io.github.encore_dms.DataContext;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 public class Source extends AbstractAnnotatableEntity {
 
-    public Source(DataContext context, User owner, Experiment experiment, String label) {
+    public Source(DataContext context, User owner, Experiment experiment, Source parent, String label) {
         super(context, owner);
         this.experiment = experiment;
         this.label = label;
+        this.parent = parent;
+        this.children = new LinkedList<>();
     }
 
     protected Source() {
@@ -36,4 +42,27 @@ public class Source extends AbstractAnnotatableEntity {
         transactionWrapped((Runnable) () -> this.label = label);
     }
 
+    @ManyToOne
+    private Source parent;
+
+    public Source getParent() {
+        return parent;
+    }
+
+    @OneToMany(mappedBy = "parent")
+    private List<Source> children;
+
+    public Source insertSource(String label) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label);
+            c.insertEntity(s);
+            children.add(s);
+            return s;
+        });
+    }
+
+    public Stream<Source> getChildren() {
+        return children.stream();
+    }
 }
