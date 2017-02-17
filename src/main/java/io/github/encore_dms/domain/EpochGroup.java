@@ -35,6 +35,13 @@ public class EpochGroup extends AbstractTimelineEntity {
     }
 
     @ManyToOne
+    private EpochGroup parent;
+
+    public EpochGroup getParent() {
+        return parent;
+    }
+
+    @ManyToOne
     private Source source;
 
     public Source getSource() {
@@ -50,13 +57,6 @@ public class EpochGroup extends AbstractTimelineEntity {
 
     public void setLabel(String label) {
         transactionWrapped((Runnable) () -> this.label = label);
-    }
-
-    @ManyToOne
-    private EpochGroup parent;
-
-    public EpochGroup getParent() {
-        return parent;
     }
 
     @OneToMany(mappedBy = "parent")

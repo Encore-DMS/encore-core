@@ -28,17 +28,6 @@ public class Experiment extends AbstractTimelineEntity {
     protected Experiment() {
     }
 
-    @Basic
-    private String purpose;
-
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public void setPurpose(String purpose) {
-        transactionWrapped((Runnable) () -> this.purpose = purpose);
-    }
-
     @ManyToMany(mappedBy = "experiments")
     @OrderBy("startTime ASC")
     private List<Project> projects;
@@ -55,6 +44,17 @@ public class Experiment extends AbstractTimelineEntity {
 
     public Stream<Project> getProjects() {
         return projects.stream();
+    }
+
+    @Basic
+    private String purpose;
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        transactionWrapped((Runnable) () -> this.purpose = purpose);
     }
 
     @OneToMany(mappedBy = "experiment")

@@ -2,13 +2,15 @@
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
 
     <persistence-unit name="Main" transaction-type="RESOURCE_LOCAL">
-        <class>io.github.encore_dms.domain.Project</class>
-        <class>io.github.encore_dms.domain.AbstractEntity</class>
-        <class>io.github.encore_dms.domain.Experiment</class>
-        <class>io.github.encore_dms.domain.Source</class>
-        <class>io.github.encore_dms.domain.EpochGroup</class>
-        <class>io.github.encore_dms.domain.AbstractTimelineEntity</class>
-        <class>io.github.encore_dms.domain.User</class>
         <class>io.github.encore_dms.domain.AbstractAnnotatableEntity</class>
+        <class>io.github.encore_dms.domain.AbstractEntity</class>
+        <class>io.github.encore_dms.domain.AbstractTimelineEntity</class>
+        <class>io.github.encore_dms.domain.Epoch</class>
+        <class>io.github.encore_dms.domain.EpochBlock</class>
+        <class>io.github.encore_dms.domain.EpochGroup</class>
+        <class>io.github.encore_dms.domain.Experiment</class>
+        <class>io.github.encore_dms.domain.Project</class>
+        <class>io.github.encore_dms.domain.Source</class>
+        <class>io.github.encore_dms.domain.User</class>
     </persistence-unit>
 </persistence>
