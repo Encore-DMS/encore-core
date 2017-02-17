@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Entity
@@ -20,6 +21,7 @@ public class EpochGroup extends AbstractTimelineEntity {
         this.source = source;
         this.label = label;
         this.children = new LinkedList<>();
+        this.epochBlocks = new LinkedList<>();
     }
 
     protected EpochGroup() {
@@ -74,5 +76,24 @@ public class EpochGroup extends AbstractTimelineEntity {
 
     public Stream<EpochGroup> getChildren() {
         return children.stream();
+    }
+
+    @OneToMany(mappedBy = "epochGroup")
+    @OrderBy("startTime ASC")
+    private List<EpochBlock> epochBlocks;
+
+    public EpochBlock insertEpochBlock(String protocolId, Map<String, Object> parameters, ZonedDateTime start, ZonedDateTime end) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            EpochBlock b = new EpochBlock(c, c.getAuthenticatedUser(), this, protocolId, parameters, start, end);
+            c.insertEntity(b);
+            epochBlocks.add(b);
+            epochBlocks.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+            return b;
+        });
+    }
+
+    public Stream<EpochBlock> getEpochBlocks() {
+        return epochBlocks.stream();
     }
 }

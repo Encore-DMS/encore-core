@@ -11,9 +11,7 @@ import org.mockito.MockitoAnnotations;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,6 +82,41 @@ public class EpochGroupTest extends AbstractTest {
         expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
 
         List<EpochGroup> actual = group.getChildren().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void insertEpochBlock() {
+        String protocolId = "protocol.test";
+        Map<String, Object> parameters = new HashMap<>();
+        ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
+        ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
+
+        EpochBlock b = group.insertEpochBlock(protocolId, parameters, start, end);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(protocolId, b.getProtocolId());
+        assertEquals(start, b.getStartTime());
+        assertEquals(end, b.getEndTime());
+    }
+
+    @Test
+    public void getEpochBlocks() {
+        List<EpochBlock> expected = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                EpochBlock b = group.insertEpochBlock("protocol.test." + (i * 5 + k), null, time, time.plusMinutes(i));
+                expected.add(b);
+            }
+        }
+        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+
+        List<EpochBlock> actual = group.getEpochBlocks().collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
