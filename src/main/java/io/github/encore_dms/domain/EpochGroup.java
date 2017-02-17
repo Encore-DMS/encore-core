@@ -2,19 +2,24 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.Basic;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Entity
 public class EpochGroup extends AbstractTimelineEntity {
 
-    public EpochGroup(DataContext context, User owner, Experiment experiment, Source source, String label, ZonedDateTime start, ZonedDateTime end) {
+    public EpochGroup(DataContext context, User owner, Experiment experiment, EpochGroup parent, Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.experiment = experiment;
+        this.parent = parent;
         this.source = source;
         this.label = label;
+        this.children = new LinkedList<>();
     }
 
     protected EpochGroup() {
@@ -45,4 +50,29 @@ public class EpochGroup extends AbstractTimelineEntity {
         transactionWrapped((Runnable) () -> this.label = label);
     }
 
+    @ManyToOne
+    private EpochGroup parent;
+
+    public EpochGroup getParent() {
+        return parent;
+    }
+
+    @OneToMany(mappedBy = "parent")
+    @OrderBy("startTime ASC")
+    private List<EpochGroup> children;
+
+    public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), getExperiment(), this, source, label, start, end);
+            c.insertEntity(g);
+            children.add(g);
+            children.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+            return g;
+        });
+    }
+
+    public Stream<EpochGroup> getChildren() {
+        return children.stream();
+    }
 }

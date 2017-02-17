@@ -81,7 +81,7 @@ public class Experiment extends AbstractTimelineEntity {
     public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, source, label, start, end);
+            EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, null, source, label, start, end);
             c.insertEntity(g);
             epochGroups.add(g);
             epochGroups.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));

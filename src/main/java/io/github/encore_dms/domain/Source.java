@@ -16,8 +16,8 @@ public class Source extends AbstractAnnotatableEntity {
     public Source(DataContext context, User owner, Experiment experiment, Source parent, String label) {
         super(context, owner);
         this.experiment = experiment;
-        this.label = label;
         this.parent = parent;
+        this.label = label;
         this.children = new LinkedList<>();
     }
 
@@ -31,6 +31,13 @@ public class Source extends AbstractAnnotatableEntity {
         return experiment;
     }
 
+    @ManyToOne
+    private Source parent;
+
+    public Source getParent() {
+        return parent;
+    }
+
     @Basic
     private String label;
 
@@ -40,13 +47,6 @@ public class Source extends AbstractAnnotatableEntity {
 
     public void setLabel(String label) {
         transactionWrapped((Runnable) () -> this.label = label);
-    }
-
-    @ManyToOne
-    private Source parent;
-
-    public Source getParent() {
-        return parent;
     }
 
     @OneToMany(mappedBy = "parent")
@@ -65,4 +65,5 @@ public class Source extends AbstractAnnotatableEntity {
     public Stream<Source> getChildren() {
         return children.stream();
     }
+
 }
