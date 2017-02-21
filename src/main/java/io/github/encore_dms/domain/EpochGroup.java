@@ -82,10 +82,10 @@ public class EpochGroup extends AbstractTimelineEntity {
     @OrderBy("startTime ASC")
     private List<EpochBlock> epochBlocks;
 
-    public EpochBlock insertEpochBlock(String protocolId, Map<String, Object> parameters, ZonedDateTime start, ZonedDateTime end) {
+    public EpochBlock insertEpochBlock(String protocolId, Map<String, Object> protocolParameters, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            EpochBlock b = new EpochBlock(c, c.getAuthenticatedUser(), this, protocolId, parameters, start, end);
+            EpochBlock b = new EpochBlock(c, c.getAuthenticatedUser(), this, protocolId, protocolParameters, start, end);
             c.insertEntity(b);
             epochBlocks.add(b);
             epochBlocks.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));

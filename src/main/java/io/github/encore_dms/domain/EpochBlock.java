@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 @Entity
 public class EpochBlock extends AbstractTimelineEntity {
 
-    public EpochBlock(DataContext context, User owner, EpochGroup epochGroup, String protocolId, Map<String, Object> parameters, ZonedDateTime start, ZonedDateTime end) {
+    public EpochBlock(DataContext context, User owner, EpochGroup epochGroup, String protocolId, Map<String, Object> protocolParameters, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.epochGroup = epochGroup;
         this.protocolId = protocolId;

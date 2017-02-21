@@ -22,6 +22,7 @@ public class Experiment extends AbstractTimelineEntity {
         }
         this.purpose = purpose;
         this.sources = new LinkedList<>();
+        this.devices = new LinkedList<>();
         this.epochGroups = new LinkedList<>();
     }
 
@@ -72,6 +73,23 @@ public class Experiment extends AbstractTimelineEntity {
 
     public Stream<Source> getSources() {
         return sources.stream();
+    }
+
+    @OneToMany(mappedBy = "experiment")
+    private List<Device> devices;
+
+    public Device insertDevice(String name, String manufacturer) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Device d = new Device(c, c.getAuthenticatedUser(), this, name, manufacturer);
+            c.insertEntity(d);
+            devices.add(d);
+            return d;
+        });
+    }
+
+    public Stream<Device> getDevices() {
+        return devices.stream();
     }
 
     @OneToMany(mappedBy = "experiment")

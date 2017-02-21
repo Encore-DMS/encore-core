@@ -107,6 +107,35 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
+    public void insertDevice() {
+        String name = "device";
+        String manufacturer = "acme";
+
+        Device d = experiment.insertDevice(name, manufacturer);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(name, d.getName());
+        assertEquals(manufacturer, d.getManufacturer());
+        assertEquals(experiment, d.getExperiment());
+    }
+
+    @Test
+    public void getDevices() {
+        List<Device> expected = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Device d = experiment.insertDevice("name" + i, "man" + i);
+            expected.add(d);
+        }
+
+        List<Device> actual = experiment.getDevices().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void insertEpochGroup() {
         Source source = new Source(context, null, null, null, "source label");
         String label = "epoch group";
