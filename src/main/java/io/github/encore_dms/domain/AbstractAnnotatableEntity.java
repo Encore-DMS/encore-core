@@ -17,7 +17,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     protected AbstractAnnotatableEntity() {
     }
 
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne
     private User owner;
 
     @Override
