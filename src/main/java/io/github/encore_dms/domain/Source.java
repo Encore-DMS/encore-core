@@ -13,11 +13,12 @@ import java.util.stream.Stream;
 @Entity
 public class Source extends AbstractAnnotatableEntity {
 
-    public Source(DataContext context, User owner, Experiment experiment, Source parent, String label) {
+    public Source(DataContext context, User owner, Experiment experiment, Source parent, String label, String identifier) {
         super(context, owner);
         this.experiment = experiment;
         this.parent = parent;
         this.label = label;
+        this.identifier = identifier;
         this.children = new LinkedList<>();
     }
 
@@ -49,13 +50,24 @@ public class Source extends AbstractAnnotatableEntity {
         transactionWrapped((Runnable) () -> this.label = label);
     }
 
+    @Basic
+    private String identifier;
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        transactionWrapped((Runnable) () -> this.identifier = identifier);
+    }
+
     @OneToMany(mappedBy = "parent")
     private List<Source> children;
 
-    public Source insertSource(String label) {
+    public Source insertSource(String label, String identifier) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label);
+            Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label, identifier);
             c.insertEntity(s);
             children.add(s);
             return s;

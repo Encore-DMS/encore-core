@@ -28,7 +28,7 @@ public class SourceTest extends AbstractTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        source = new Source(context, null, null, null, "source label");
+        source = new Source(context, null, null, null, "source label", "identifier");
     }
 
     @Test
@@ -48,14 +48,16 @@ public class SourceTest extends AbstractTest {
     @Test
     public void insertSource() {
         String label = "source";
+        String identifier = "identifier";
 
-        Source s = source.insertSource(label);
+        Source s = source.insertSource(label, identifier);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
         inOrder.verify(context, atLeastOnce()).commitTransaction();
 
         assertEquals(label, s.getLabel());
+        assertEquals(identifier, s.getIdentifier());
         assertEquals(source, s.getParent());
         assertEquals(source.getExperiment(), s.getExperiment());
     }
@@ -64,7 +66,7 @@ public class SourceTest extends AbstractTest {
     public void getChildren() {
         List<Source> expected = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Source s = source.insertSource("label" + i);
+            Source s = source.insertSource("label" + i, "identifier" + i);
             expected.add(s);
         }
 

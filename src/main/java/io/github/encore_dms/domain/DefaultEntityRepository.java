@@ -24,6 +24,13 @@ public class DefaultEntityRepository implements EntityRepository {
     }
 
     @Override
+    public Stream<Source> getSourcesWithIdentifier(Experiment experiment, String identifier) {
+        return query("SELECT s FROM Experiment e JOIN e.sources s " +
+                "WHERE e.uuid = '" + experiment.getUuid() + "' AND s.identifier = '" + identifier + "'",
+                Source.class);
+    }
+
+    @Override
     public void persist(Entity entity) {
         dao.persist(entity);
     }

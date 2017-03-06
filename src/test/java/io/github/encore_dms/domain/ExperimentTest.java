@@ -82,8 +82,9 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void insertSource() {
         String label = "source";
+        String identifier = "identifier";
 
-        Source s = experiment.insertSource(label);
+        Source s = experiment.insertSource(label, identifier);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
@@ -97,7 +98,7 @@ public class ExperimentTest extends AbstractTest {
     public void getSources() {
         List<Source> expected = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Source s = experiment.insertSource("label" + i);
+            Source s = experiment.insertSource("label" + i, "id" + i);
             expected.add(s);
         }
 
@@ -137,7 +138,7 @@ public class ExperimentTest extends AbstractTest {
 
     @Test
     public void insertEpochGroup() {
-        Source source = new Source(context, null, null, null, "source label");
+        Source source = new Source(context, null, null, null, "source label", "id");
         String label = "epoch group";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");

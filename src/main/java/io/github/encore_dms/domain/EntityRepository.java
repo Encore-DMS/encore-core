@@ -9,6 +9,8 @@ public interface EntityRepository {
 
     Stream<Project> getProjects();
 
+    Stream<Source> getSourcesWithIdentifier(Experiment experiment, String identifier);
+
     void persist(Entity entity);
 
     <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);

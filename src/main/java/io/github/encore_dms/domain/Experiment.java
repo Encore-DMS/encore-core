@@ -61,10 +61,10 @@ public class Experiment extends AbstractTimelineEntity {
     @OneToMany(mappedBy = "experiment")
     private List<Source> sources;
 
-    public Source insertSource(String label) {
+    public Source insertSource(String label, String identifier) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Source s = new Source(c, c.getAuthenticatedUser(), this, null, label);
+            Source s = new Source(c, c.getAuthenticatedUser(), this, null, label, identifier);
             c.insertEntity(s);
             sources.add(s);
             return s;
@@ -73,6 +73,10 @@ public class Experiment extends AbstractTimelineEntity {
 
     public Stream<Source> getSources() {
         return sources.stream();
+    }
+
+    public Stream<Source> getSourcesWithIdentifier(String identifier) {
+        return getDataContext().getRepository().getSourcesWithIdentifier(this, identifier);
     }
 
     @OneToMany(mappedBy = "experiment")
