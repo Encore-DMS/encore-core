@@ -14,10 +14,12 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 
@@ -108,6 +110,20 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
+    public void getSourcesWithIdentifier() {
+        List<Source> expected = new ArrayList<>();
+
+        experiment.insertSource("label1", "id1");
+        expected.add(experiment.insertSource("label2", "id2"));
+        experiment.insertSource("label3", "id3");
+        expected.add(experiment.insertSource("label4", "id2"));
+
+        List<Source> actual = experiment.getSourcesWithIdentifier("id2").collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void insertDevice() {
         String name = "device";
         String manufacturer = "acme";
@@ -134,6 +150,18 @@ public class ExperimentTest extends AbstractTest {
         List<Device> actual = experiment.getDevices().collect(Collectors.toList());
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getDevice() {
+        experiment.insertDevice("name2", "man1");
+        Device expected = experiment.insertDevice("name2", "man2");
+        experiment.insertDevice("name3", "man2");
+
+        Optional<Device> actual = experiment.getDevice("name2", "man2");
+
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
     }
 
     @Test
