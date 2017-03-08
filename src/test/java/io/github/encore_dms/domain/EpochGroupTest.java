@@ -89,11 +89,11 @@ public class EpochGroupTest extends AbstractTest {
     @Test
     public void insertEpochBlock() {
         String protocolId = "protocol.test";
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Object> protocolParameters = new HashMap<>();
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
 
-        EpochBlock b = group.insertEpochBlock(protocolId, parameters, start, end);
+        EpochBlock b = group.insertEpochBlock(protocolId, protocolParameters, start, end);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();

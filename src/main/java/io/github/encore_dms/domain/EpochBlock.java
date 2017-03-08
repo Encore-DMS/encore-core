@@ -42,10 +42,10 @@ public class EpochBlock extends AbstractTimelineEntity {
     @OrderBy("startTime ASC")
     private List<Epoch> epochs;
 
-    public Epoch insertEpoch(ZonedDateTime start, ZonedDateTime end) {
+    public Epoch insertEpoch(Map<String, Object> protocolParameters, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Epoch e = new Epoch(c, c.getAuthenticatedUser(), this, start, end);
+            Epoch e = new Epoch(c, c.getAuthenticatedUser(), this, protocolParameters, start, end);
             c.insertEntity(e);
             epochs.add(e);
             epochs.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));

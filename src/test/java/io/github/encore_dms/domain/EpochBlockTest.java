@@ -11,9 +11,7 @@ import org.mockito.MockitoAnnotations;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,10 +36,11 @@ public class EpochBlockTest extends AbstractTest {
 
     @Test
     public void insertEpoch() {
+        Map<String, Object> protocolParameters = new HashMap<>();
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
 
-        Epoch e = block.insertEpoch(start, end);
+        Epoch e = block.insertEpoch(protocolParameters, start, end);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
@@ -57,8 +56,9 @@ public class EpochBlockTest extends AbstractTest {
         List<Epoch> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             for (int k = 0; k < 5; k++) {
+                Map<String, Object> protocolParameters = new HashMap<>();
                 ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
-                Epoch e = block.insertEpoch(time, time.plusMinutes(i));
+                Epoch e = block.insertEpoch(protocolParameters, time, time.plusMinutes(i));
                 expected.add(e);
             }
         }

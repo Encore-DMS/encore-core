@@ -27,9 +27,10 @@ public class EpochTest extends AbstractTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
+        Map<String, Object> protocolParameters = new HashMap<>();
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");
-        epoch = new Epoch(context, null, null, start, end);
+        epoch = new Epoch(context, null, null, protocolParameters, start, end);
     }
 
     @Test
