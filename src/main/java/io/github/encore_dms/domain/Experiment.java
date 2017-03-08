@@ -58,10 +58,10 @@ public class Experiment extends AbstractTimelineEntity {
     @OneToMany(mappedBy = "experiment")
     private List<Source> sources;
 
-    public Source insertSource(String label, String identifier) {
+    public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Source s = new Source(c, c.getAuthenticatedUser(), this, null, label, identifier);
+            Source s = new Source(c, c.getAuthenticatedUser(), this, null, label, creationTime, identifier);
             c.insertEntity(s);
             sources.add(s);
             return s;

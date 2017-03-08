@@ -84,15 +84,18 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void insertSource() {
         String label = "source";
+        ZonedDateTime creationTime = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
         String identifier = "identifier";
 
-        Source s = experiment.insertSource(label, identifier);
+        Source s = experiment.insertSource(label, creationTime, identifier);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
         inOrder.verify(context, atLeastOnce()).commitTransaction();
 
         assertEquals(label, s.getLabel());
+        assertEquals(creationTime, s.getCreationTime());
+        assertEquals(identifier, s.getIdentifier());
         assertEquals(experiment, s.getExperiment());
     }
 
@@ -100,7 +103,7 @@ public class ExperimentTest extends AbstractTest {
     public void getSources() {
         List<Source> expected = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Source s = experiment.insertSource("label" + i, "id" + i);
+            Source s = experiment.insertSource("label" + i, ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "id" + i);
             expected.add(s);
         }
 
@@ -113,10 +116,11 @@ public class ExperimentTest extends AbstractTest {
     public void getSourcesWithIdentifier() {
         List<Source> expected = new ArrayList<>();
 
-        experiment.insertSource("label1", "id1");
-        expected.add(experiment.insertSource("label2", "id2"));
-        experiment.insertSource("label3", "id3");
-        expected.add(experiment.insertSource("label4", "id2"));
+        ZonedDateTime creationTime = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
+        experiment.insertSource("label1", creationTime, "id1");
+        expected.add(experiment.insertSource("label2", creationTime, "id2"));
+        experiment.insertSource("label3", creationTime, "id3");
+        expected.add(experiment.insertSource("label4", creationTime, "id2"));
 
         List<Source> actual = experiment.getSourcesWithIdentifier("id2").collect(Collectors.toList());
 
@@ -166,7 +170,8 @@ public class ExperimentTest extends AbstractTest {
 
     @Test
     public void insertEpochGroup() {
-        Source source = new Source(context, null, null, null, "source label", "id");
+        ZonedDateTime creationTime = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
+        Source source = new Source(context, null, null, null, "source label", creationTime, "id");
         String label = "epoch group";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");

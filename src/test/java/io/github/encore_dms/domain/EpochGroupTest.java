@@ -51,7 +51,7 @@ public class EpochGroupTest extends AbstractTest {
 
     @Test
     public void insertEpochGroup() {
-        Source source = new Source(context, null, null, null, "source label", "id");
+        Source source = new Source(context, null, null, null, "source label", ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "id");
         String label = "epoch group";
         ZonedDateTime start = ZonedDateTime.parse("2016-07-01T12:01:10Z[GMT]");
         ZonedDateTime end = ZonedDateTime.parse("2016-07-01T13:12:14Z[GMT]");

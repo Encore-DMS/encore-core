@@ -6,6 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -13,11 +14,12 @@ import java.util.stream.Stream;
 @Entity
 public class Source extends AbstractAnnotatableEntity {
 
-    public Source(DataContext context, User owner, Experiment experiment, Source parent, String label, String identifier) {
+    public Source(DataContext context, User owner, Experiment experiment, Source parent, String label, ZonedDateTime creationTime, String identifier) {
         super(context, owner);
         this.experiment = experiment;
         this.parent = parent;
         this.label = label;
+        this.creationTime = creationTime;
         this.identifier = identifier;
         this.children = new LinkedList<>();
     }
@@ -51,6 +53,13 @@ public class Source extends AbstractAnnotatableEntity {
     }
 
     @Basic
+    private ZonedDateTime creationTime;
+
+    public ZonedDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    @Basic
     private String identifier;
 
     public String getIdentifier() {
@@ -64,10 +73,10 @@ public class Source extends AbstractAnnotatableEntity {
     @OneToMany(mappedBy = "parent")
     private List<Source> children;
 
-    public Source insertSource(String label, String identifier) {
+    public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label, identifier);
+            Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label, creationTime, identifier);
             c.insertEntity(s);
             children.add(s);
             return s;
