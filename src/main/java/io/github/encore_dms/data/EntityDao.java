@@ -12,6 +12,8 @@ public interface EntityDao {
 
     void persist(Entity entity);
 
-    <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);
+    <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass);
+
+    <T extends Entity> Query<T> createNamedQuery(String name, Class<T> resultClass);
 
 }

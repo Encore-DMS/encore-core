@@ -21,7 +21,7 @@ public class DefaultEntityDao implements EntityDao {
 
     @Override
     public <T extends Entity> Stream<T> getAll(String entityName, Class<T> entityType) {
-        return query("SELECT e FROM " + entityName + " e", entityType);
+        return createQuery("SELECT e FROM " + entityName + " e", entityType).stream();
     }
 
     @Override
@@ -30,8 +30,15 @@ public class DefaultEntityDao implements EntityDao {
     }
 
     @Override
-    public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
+    public <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass) {
         Session session = entityManager.unwrap(Session.class);
-        return session.createQuery(qlString, resultClass).stream();
+        return new Query<>(session.createQuery(qlString, resultClass));
     }
+
+    @Override
+    public <T extends Entity> Query<T> createNamedQuery(String name, Class<T> resultClass) {
+        Session session = entityManager.unwrap(Session.class);
+        return new Query<>(session.createNamedQuery(name, resultClass));
+    }
+
 }

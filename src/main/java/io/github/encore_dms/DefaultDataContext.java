@@ -31,7 +31,7 @@ public class DefaultDataContext implements DataContext {
 
     @Override
     public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
-        return getRepository().query(qlString, null);
+        return getRepository().createQuery(qlString, resultClass).stream();
     }
 
     @Override

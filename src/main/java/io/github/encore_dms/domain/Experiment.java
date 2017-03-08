@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
+@NamedQuery(name = "Experiment.getSourcesWithIdentifier", query = "SELECT s FROM Experiment e JOIN e.sources s WHERE e.uuid = :expUuid AND s.identifier = :srcId")
 public class Experiment extends AbstractTimelineEntity {
 
     public Experiment(DataContext context, User owner, Project project, String purpose, ZonedDateTime start, ZonedDateTime end) {
@@ -76,7 +77,10 @@ public class Experiment extends AbstractTimelineEntity {
     }
 
     public Stream<Source> getSourcesWithIdentifier(String identifier) {
-        return getDataContext().getRepository().getSourcesWithIdentifier(this, identifier);
+        return getDataContext().getRepository().createNamedQuery("Experiment.getSourcesWithIdentifier", Source.class)
+                .setParameter("expUuid", getUuid())
+                .setParameter("srcId", identifier)
+                .stream();
     }
 
     @OneToMany(mappedBy = "experiment")
