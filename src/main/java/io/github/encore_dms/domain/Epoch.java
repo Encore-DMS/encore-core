@@ -19,6 +19,7 @@ public class Epoch extends AbstractTimelineEntity {
         this.epochBlock = epochBlock;
         this.responses = new LinkedList<>();
         this.stimuli = new LinkedList<>();
+        this.backgrounds = new LinkedList<>();
     }
 
     protected Epoch() {
@@ -64,5 +65,20 @@ public class Epoch extends AbstractTimelineEntity {
     public Stream<Stimulus> getStimuli() {
         return stimuli.stream();
     }
+
+    @OneToMany(mappedBy = "epoch")
+    private List<Background> backgrounds;
+
+    public Background insertBackground(Device device, Map<String, Object> deviceParameters, double value, String units, double sampleRate, String sampleRateUnits) {
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            Background b = new Background(c, c.getAuthenticatedUser(), this, device, deviceParameters, value, units, sampleRate, sampleRateUnits);
+            c.insertEntity(b);
+            backgrounds.add(b);
+            return b;
+        });
+    }
+
+    public Stream<Background> getBackgrounds() { return backgrounds.stream(); }
 
 }

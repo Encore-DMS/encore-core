@@ -103,4 +103,40 @@ public class EpochTest extends AbstractTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void insertBackground() {
+        Device device = new Device(context, null, null, "device name", "manufacturer name");
+        Map<String, Object> deviceParameters = new HashMap<>();
+        double value = -60;
+        String units = "pA";
+        double sampleRate = 10;
+        String sampleRateUnits = "Hz";
+
+        Background b = epoch.insertBackground(device, deviceParameters, value, units, sampleRate, sampleRateUnits);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(device, b.getDevice());
+        assertEquals(value, b.getValue());
+        assertEquals(units, b.getUnits());
+        assertEquals(sampleRate, b.getSampleRate());
+        assertEquals(sampleRateUnits, b.getSampleRateUnits());
+        assertEquals(epoch, b.getEpoch());
+    }
+
+    @Test
+    public void getBackground() {
+        List<Background> expected = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Background b = epoch.insertBackground(null, null, i, "units", i+3, "runits");
+            expected.add(b);
+        }
+
+        List<Background> actual = epoch.getBackgrounds().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
 }
