@@ -52,10 +52,10 @@ public class Epoch extends AbstractTimelineEntity {
     @OneToMany(mappedBy = "epoch")
     private List<Stimulus> stimuli;
 
-    public Stimulus insertStimulus(Device device, Map<String, Object> deviceParameters, String stimulusId, Map<String, Object> parameters, String units) {
+    public Stimulus insertStimulus(Device device, Map<String, Object> deviceParameters, String stimulusId, Map<String, Object> parameters, String units, List<Double> data) {
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
-            Stimulus s = new Stimulus(c, c.getAuthenticatedUser(), this, device, deviceParameters, stimulusId, parameters, units);
+            Stimulus s = new Stimulus(c, c.getAuthenticatedUser(), this, device, deviceParameters, stimulusId, parameters, units, data);
             c.insertEntity(s);
             stimuli.add(s);
             return s;

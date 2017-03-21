@@ -77,8 +77,9 @@ public class EpochTest extends AbstractTest {
         String stimulusId = "io.github.symphony_das.Pulse";
         Map<String, Object> parameters = new HashMap<>();
         String units = "pA";
+        List<Double> data = new ArrayList<Double>(Arrays.asList(1d, 2d, 3d));
 
-        Stimulus s = epoch.insertStimulus(device, deviceParameters, stimulusId, parameters, units);
+        Stimulus s = epoch.insertStimulus(device, deviceParameters, stimulusId, parameters, units, data);
 
         InOrder inOrder = inOrder(context);
         inOrder.verify(context, atLeastOnce()).beginTransaction();
@@ -88,13 +89,14 @@ public class EpochTest extends AbstractTest {
         assertEquals(stimulusId, s.getStimulusId());
         assertEquals(units, s.getUnits());
         assertEquals(epoch, s.getEpoch());
+        assertEquals(data, s.getData().get());
     }
 
     @Test
     public void getStimuli() {
         List<Stimulus> expected = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Stimulus s = epoch.insertStimulus(null, null, "stim" + i, null, "units");
+            Stimulus s = epoch.insertStimulus(null, null, "stim" + i, null, "units", null);
             expected.add(s);
         }
 
