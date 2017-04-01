@@ -1,6 +1,5 @@
 package io.github.encore_dms.data;
 
-import java.util.UUID;
 import java.util.stream.Stream;
 
 public class Query<T> {

@@ -3,11 +3,13 @@ package io.github.encore_dms.domain;
 import io.github.encore_dms.DataContext;
 
 import javax.persistence.Basic;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
 import java.util.Map;
 
-@MappedSuperclass
+@javax.persistence.Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class AbstractSignal extends AbstractAnnotatableEntity {
 
     AbstractSignal(DataContext context, User owner, Epoch epoch, Device device, Map<String, Object> deviceParameters, String units) {

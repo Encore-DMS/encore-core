@@ -3,7 +3,8 @@ package io.github.encore_dms.util;
 import com.physion.ebuilder.expression.*;
 import org.hibernate.cfg.NotYetImplementedException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpressionUtilities {
 

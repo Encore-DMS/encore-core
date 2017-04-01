@@ -1,5 +1,9 @@
 package io.github.encore_dms.domain;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.KeywordAnnotatable;
 import io.github.encore_dms.domain.mixin.NoteAnnotatable;
@@ -7,17 +11,22 @@ import io.github.encore_dms.domain.mixin.Owned;
 import io.github.encore_dms.domain.mixin.PropertyAnnotatable;
 import io.github.encore_dms.values.NoteAnnotation;
 
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
-@MappedSuperclass
+@javax.persistence.Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned, PropertyAnnotatable, KeywordAnnotatable, NoteAnnotatable {
 
     AbstractAnnotatableEntity(DataContext context, User owner) {
         super(context);
         this.owner = owner;
+        keywords = new HashMap<>();
     }
 
     protected AbstractAnnotatableEntity() {
@@ -32,11 +41,6 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Map<User, Map<String, Object>> getProperties() {
-        return null;
-    }
-
-    @Override
     public void addProperty(String key, Object value) {
 
     }
@@ -47,23 +51,46 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Map<User, String> getKeywords() {
+    public Map<User, Map<String, Object>> getProperties() {
         return null;
     }
 
+    @OneToMany(mappedBy = "entity")
+    private Map<User, KeywordSet> keywords;
+
     @Override
     public void addKeyword(String keyword) {
-
+        transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            User owner = c.getAuthenticatedUser();
+            if (!keywords.containsKey(owner)) {
+                KeywordSet k = new KeywordSet(c, this);
+                c.insertEntity(k);
+                keywords.put(owner, k);
+            }
+            keywords.get(owner).add(keyword);
+        });
     }
 
     @Override
     public void removeKeyword(String keyword) {
-
+        transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            User owner = c.getAuthenticatedUser();
+            if (keywords.containsKey(owner)) {
+                KeywordSet k = keywords.get(owner);
+                k.remove(keyword);
+            }
+        });
     }
 
     @Override
-    public Map<User, NoteAnnotation> getNotes() {
-        return null;
+    public Multimap<User, String> getKeywords() {
+        SetMultimap<User, String> result = HashMultimap.create();
+        for (Map.Entry<User, KeywordSet> e : keywords.entrySet()) {
+            result.putAll(e.getKey(), e.getValue().getKeywords());
+        }
+        return Multimaps.unmodifiableMultimap(result);
     }
 
     @Override
@@ -74,6 +101,11 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     @Override
     public void removeNote(NoteAnnotation note) {
 
+    }
+
+    @Override
+    public Multimap<User, NoteAnnotation> getNotes() {
+        return null;
     }
 
 }

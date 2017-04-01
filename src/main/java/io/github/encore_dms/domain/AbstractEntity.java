@@ -9,7 +9,8 @@ import java.net.URI;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-@MappedSuperclass
+@javax.persistence.Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class AbstractEntity implements Entity {
 
     AbstractEntity(DataContext context) {

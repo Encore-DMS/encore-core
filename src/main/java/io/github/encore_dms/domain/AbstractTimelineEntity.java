@@ -4,10 +4,12 @@ import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.TimelineElement;
 
 import javax.persistence.Basic;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import java.time.ZonedDateTime;
 
-@MappedSuperclass
+@javax.persistence.Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class AbstractTimelineEntity extends AbstractAnnotatableEntity implements TimelineElement {
 
     AbstractTimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
