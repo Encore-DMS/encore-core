@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -88,9 +89,19 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     public Multimap<User, String> getKeywords() {
         SetMultimap<User, String> result = HashMultimap.create();
         for (Map.Entry<User, KeywordSet> e : keywords.entrySet()) {
-            result.putAll(e.getKey(), e.getValue().getKeywords());
+            result.putAll(e.getKey(), e.getValue().getKeywords()::iterator);
         }
         return Multimaps.unmodifiableMultimap(result);
+    }
+
+    @Override
+    public Stream<String> getAllKeywords() {
+        return keywords.values().stream().flatMap(KeywordSet::getKeywords);
+    }
+
+    @Override
+    public Stream<String> getUserKeywords(User user) {
+        return keywords.get(user).getKeywords();
     }
 
     @Override

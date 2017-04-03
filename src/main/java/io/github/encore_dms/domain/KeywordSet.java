@@ -6,6 +6,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.ManyToOne;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @javax.persistence.Entity
 public class KeywordSet extends AbstractEntity {
@@ -41,8 +42,8 @@ public class KeywordSet extends AbstractEntity {
         });
     }
 
-    public Set<String> getKeywords() {
-        return keywords;
+    public Stream<String> getKeywords() {
+        return keywords.stream();
     }
 
     public boolean isEmpty() {
