@@ -7,13 +7,10 @@ import com.google.common.collect.SetMultimap;
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.KeywordAnnotatable;
 import io.github.encore_dms.domain.mixin.NoteAnnotatable;
-import io.github.encore_dms.domain.mixin.Owned;
 import io.github.encore_dms.domain.mixin.PropertyAnnotatable;
-import io.github.encore_dms.values.NoteAnnotation;
 
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -22,23 +19,15 @@ import java.util.stream.Stream;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned, PropertyAnnotatable, KeywordAnnotatable, NoteAnnotatable {
+abstract class AbstractAnnotatableEntity extends AbstractEntity implements PropertyAnnotatable, KeywordAnnotatable, NoteAnnotatable {
 
     AbstractAnnotatableEntity(DataContext context, User owner) {
-        super(context);
-        this.owner = owner;
+        super(context, owner);
         keywords = new HashMap<>();
+        notes = new HashMap<>();
     }
 
     protected AbstractAnnotatableEntity() {
-    }
-
-    @ManyToOne
-    private User owner;
-
-    @Override
-    public User getOwner() {
-        return owner;
     }
 
     @Override
@@ -65,7 +54,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
             DataContext c = getDataContext();
             User owner = c.getAuthenticatedUser();
             if (!keywords.containsKey(owner)) {
-                KeywordSet k = new KeywordSet(c, this);
+                KeywordSet k = new KeywordSet(c, owner, this);
                 c.insertEntity(k);
                 keywords.put(owner, k);
             }
@@ -104,18 +93,26 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
         return keywords.get(user).getKeywords();
     }
 
+    @OneToMany(mappedBy = "entity")
+    private Map<User, NoteSet> notes;
+
     @Override
-    public NoteAnnotation addNote(ZonedDateTime time, String text) {
+    public Note addNote(ZonedDateTime time, String text) {
         return null;
     }
 
     @Override
-    public void removeNote(NoteAnnotation note) {
+    public void removeNote(Note note) {
 
     }
 
     @Override
-    public Multimap<User, NoteAnnotation> getNotes() {
+    public Multimap<User, Note> getNotes() {
+        return null;
+    }
+
+    @Override
+    public Stream<Note> getUserNotes(User user) {
         return null;
     }
 

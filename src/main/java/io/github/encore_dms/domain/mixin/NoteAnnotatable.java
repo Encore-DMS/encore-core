@@ -1,17 +1,20 @@
 package io.github.encore_dms.domain.mixin;
 
 import com.google.common.collect.Multimap;
+import io.github.encore_dms.domain.Note;
 import io.github.encore_dms.domain.User;
-import io.github.encore_dms.values.NoteAnnotation;
 
 import java.time.ZonedDateTime;
+import java.util.stream.Stream;
 
 public interface NoteAnnotatable {
 
-    NoteAnnotation addNote(ZonedDateTime time, String text);
+    Note addNote(ZonedDateTime time, String text);
 
-    void removeNote(NoteAnnotation note);
+    void removeNote(Note note);
 
-    Multimap<User, NoteAnnotation> getNotes();
+    Multimap<User, Note> getNotes();
+
+    Stream<Note> getUserNotes(User user);
 
 }

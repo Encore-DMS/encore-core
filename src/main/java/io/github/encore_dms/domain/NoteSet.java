@@ -2,22 +2,23 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 @javax.persistence.Entity
-public class KeywordSet extends AbstractEntity {
+public class NoteSet extends AbstractEntity {
 
-    public KeywordSet(DataContext context, User owner, AbstractEntity entity) {
+    public NoteSet(DataContext context, User owner, AbstractEntity entity) {
         super(context, owner);
         this.entity = entity;
-        keywords = new HashSet<>();
+        notes = new HashSet<>();
     }
 
-    protected KeywordSet() {
+    protected NoteSet() {
     }
 
     @ManyToOne
@@ -27,26 +28,28 @@ public class KeywordSet extends AbstractEntity {
         return entity;
     }
 
-    @ElementCollection
-    private Set<String> keywords;
+    @OneToMany
+    @OrderBy("time ASC")
+    private Set<Note> notes;
 
-    public void add(String keyword) {
+    public void add(Note note) {
         transactionWrapped(() -> {
-            keywords.add(keyword);
+            notes.add(note);
         });
     }
 
-    public void remove(String keyword) {
+    public void remove(Note note) {
         transactionWrapped(() -> {
-            keywords.remove(keyword);
+            notes.remove(note);
         });
     }
 
-    public Stream<String> getKeywords() {
-        return keywords.stream();
+    public Stream<Note> getNotes() {
+        return notes.stream();
     }
 
     public boolean isEmpty() {
-        return keywords.isEmpty();
+        return notes.isEmpty();
     }
+
 }

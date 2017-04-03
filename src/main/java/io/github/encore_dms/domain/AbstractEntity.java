@@ -13,8 +13,9 @@ import java.util.concurrent.Callable;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class AbstractEntity implements Entity {
 
-    AbstractEntity(DataContext context) {
+    AbstractEntity(DataContext context, User owner) {
         this.context = context;
+        this.owner = owner;
     }
 
     protected AbstractEntity() {
@@ -25,6 +26,22 @@ abstract class AbstractEntity implements Entity {
     @Column(columnDefinition = "BINARY(16)")
     @Id
     private UUID uuid;
+
+    @Transient
+    private DataContext context;
+
+    @Override
+    public DataContext getDataContext() {
+        return context;
+    }
+
+    @ManyToOne
+    private User owner;
+
+    @Override
+    public User getOwner() {
+        return owner;
+    }
 
     @Override
     public UUID getUuid() {
@@ -44,14 +61,6 @@ abstract class AbstractEntity implements Entity {
     @Override
     public boolean canWrite(User user) {
         return false;
-    }
-
-    @Transient
-    private DataContext context;
-
-    @Override
-    public DataContext getDataContext() {
-        return context;
     }
 
     void transactionWrapped(Runnable block) {
