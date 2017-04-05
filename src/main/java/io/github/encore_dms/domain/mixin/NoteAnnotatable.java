@@ -15,6 +15,8 @@ public interface NoteAnnotatable {
 
     Multimap<User, Note> getNotes();
 
+    Stream<Note> getAllNotes();
+
     Stream<Note> getUserNotes(User user);
 
 }

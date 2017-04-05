@@ -10,6 +10,8 @@ public class Note extends AbstractEntity {
 
     public Note(DataContext context, User owner, ZonedDateTime time, String text) {
         super(context, owner);
+        this.time = time;
+        this.text = text;
     }
 
     protected Note() {

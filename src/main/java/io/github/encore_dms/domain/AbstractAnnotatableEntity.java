@@ -52,13 +52,13 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Prope
     public void addKeyword(String keyword) {
         transactionWrapped(() -> {
             DataContext c = getDataContext();
-            User owner = c.getAuthenticatedUser();
-            if (!keywords.containsKey(owner)) {
-                KeywordSet k = new KeywordSet(c, owner, this);
+            User user = c.getAuthenticatedUser();
+            if (!keywords.containsKey(user)) {
+                KeywordSet k = new KeywordSet(c, user, this);
                 c.insertEntity(k);
-                keywords.put(owner, k);
+                keywords.put(user, k);
             }
-            keywords.get(owner).add(keyword);
+            keywords.get(user).add(keyword);
         });
     }
 
@@ -66,9 +66,9 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Prope
     public void removeKeyword(String keyword) {
         transactionWrapped(() -> {
             DataContext c = getDataContext();
-            User owner = c.getAuthenticatedUser();
-            if (keywords.containsKey(owner)) {
-                KeywordSet k = keywords.get(owner);
+            User user = c.getAuthenticatedUser();
+            if (keywords.containsKey(user)) {
+                KeywordSet k = keywords.get(user);
                 k.remove(keyword);
             }
         });
@@ -98,22 +98,50 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Prope
 
     @Override
     public Note addNote(ZonedDateTime time, String text) {
-        return null;
+        return transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            User user = c.getAuthenticatedUser();
+            if (!notes.containsKey(user)) {
+                NoteSet n = new NoteSet(c, user, this);
+                c.insertEntity(n);
+                notes.put(user, n);
+            }
+            Note note = new Note(c, user, time, text);
+            c.insertEntity(note);
+            notes.get(user).add(note);
+            return note;
+        });
     }
 
     @Override
     public void removeNote(Note note) {
-
+        transactionWrapped(() -> {
+            DataContext c = getDataContext();
+            User user = c.getAuthenticatedUser();
+            if (notes.containsKey(user)) {
+                NoteSet n = notes.get(user);
+                n.remove(note);
+            }
+        });
     }
 
     @Override
     public Multimap<User, Note> getNotes() {
-        return null;
+        SetMultimap<User, Note> result = HashMultimap.create();
+        for (Map.Entry<User, NoteSet> e : notes.entrySet()) {
+            result.putAll(e.getKey(), e.getValue().getNotes()::iterator);
+        }
+        return Multimaps.unmodifiableMultimap(result);
+    }
+
+    @Override
+    public Stream<Note> getAllNotes() {
+        return notes.values().stream().flatMap(NoteSet::getNotes);
     }
 
     @Override
     public Stream<Note> getUserNotes(User user) {
-        return null;
+        return notes.get(user).getNotes();
     }
 
 }
