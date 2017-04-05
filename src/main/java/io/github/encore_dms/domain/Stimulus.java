@@ -18,8 +18,7 @@ public class Stimulus extends AbstractSignal {
         this.data = data;
     }
 
-    protected Stimulus() {
-    }
+    protected Stimulus() {}
 
     @Basic
     private String stimulusId;

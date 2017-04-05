@@ -16,8 +16,7 @@ public class Device extends AbstractAnnotatableEntity {
         this.manufacturer = manufacturer;
     }
 
-    protected Device() {
-    }
+    protected Device() {}
 
     @ManyToOne
     private Experiment experiment;

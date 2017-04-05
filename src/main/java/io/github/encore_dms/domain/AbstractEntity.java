@@ -13,13 +13,11 @@ import java.util.concurrent.Callable;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 abstract class AbstractEntity implements Entity {
 
-    AbstractEntity(DataContext context, User owner) {
+    AbstractEntity(DataContext context) {
         this.context = context;
-        this.owner = owner;
     }
 
-    protected AbstractEntity() {
-    }
+    protected AbstractEntity() {}
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -33,14 +31,6 @@ abstract class AbstractEntity implements Entity {
     @Override
     public DataContext getDataContext() {
         return context;
-    }
-
-    @ManyToOne
-    private User owner;
-
-    @Override
-    public User getOwner() {
-        return owner;
     }
 
     @Override

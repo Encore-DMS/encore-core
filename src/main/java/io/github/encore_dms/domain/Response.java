@@ -18,8 +18,7 @@ public class Response extends AbstractSignal {
         this.sampleRateUnits = sampleRateUnits;
     }
 
-    protected Response() {
-    }
+    protected Response() {}
 
     @ElementCollection
     private List<Double> data;

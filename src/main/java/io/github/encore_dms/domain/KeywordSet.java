@@ -11,21 +11,12 @@ import java.util.stream.Stream;
 @javax.persistence.Entity
 public class KeywordSet extends AbstractEntity {
 
-    public KeywordSet(DataContext context, User owner, AbstractEntity entity) {
-        super(context, owner);
-        this.entity = entity;
-        keywords = new HashSet<>();
+    public KeywordSet(DataContext context) {
+        super(context);
+        this.keywords = new HashSet<>();
     }
 
-    protected KeywordSet() {
-    }
-
-    @ManyToOne
-    private AbstractEntity entity;
-
-    public AbstractEntity getEntity() {
-        return entity;
-    }
+    protected KeywordSet() {}
 
     @ElementCollection
     private Set<String> keywords;

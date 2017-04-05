@@ -23,8 +23,7 @@ public class Experiment extends AbstractTimelineEntity {
         this.epochGroups = new LinkedList<>();
     }
 
-    protected Experiment() {
-    }
+    protected Experiment() {}
 
     @ManyToMany(mappedBy = "experiments")
     @OrderBy("startTime ASC")

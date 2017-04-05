@@ -24,8 +24,7 @@ public class Source extends AbstractAnnotatableEntity {
         this.children = new LinkedList<>();
     }
 
-    protected Source() {
-    }
+    protected Source() {}
 
     @ManyToOne
     private Experiment experiment;

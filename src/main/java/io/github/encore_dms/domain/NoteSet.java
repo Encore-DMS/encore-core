@@ -12,21 +12,12 @@ import java.util.stream.Stream;
 @javax.persistence.Entity
 public class NoteSet extends AbstractEntity {
 
-    public NoteSet(DataContext context, User owner, AbstractEntity entity) {
-        super(context, owner);
-        this.entity = entity;
-        notes = new HashSet<>();
+    public NoteSet(DataContext context) {
+        super(context);
+        this.notes = new HashSet<>();
     }
 
-    protected NoteSet() {
-    }
-
-    @ManyToOne
-    private AbstractEntity entity;
-
-    public AbstractEntity getEntity() {
-        return entity;
-    }
+    protected NoteSet() {}
 
     @OneToMany
     @OrderBy("time ASC")

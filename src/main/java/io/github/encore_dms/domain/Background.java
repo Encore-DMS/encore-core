@@ -16,8 +16,7 @@ public class Background extends AbstractSignal {
         this.sampleRateUnits = sampleRateUnits;
     }
 
-    protected Background() {
-    }
+    protected Background() {}
 
     @Basic
     private double value;

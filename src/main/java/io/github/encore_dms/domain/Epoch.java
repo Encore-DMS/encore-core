@@ -22,8 +22,7 @@ public class Epoch extends AbstractTimelineEntity {
         this.backgrounds = new LinkedList<>();
     }
 
-    protected Epoch() {
-    }
+    protected Epoch() {}
 
     @ManyToOne
     private EpochBlock epochBlock;

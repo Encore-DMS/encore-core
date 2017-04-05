@@ -19,8 +19,7 @@ public class AbstractSignal extends AbstractAnnotatableEntity {
         this.units = units;
     }
 
-    protected AbstractSignal() {
-    }
+    protected AbstractSignal() {}
 
     @ManyToOne
     private Epoch epoch;

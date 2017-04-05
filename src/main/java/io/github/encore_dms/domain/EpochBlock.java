@@ -21,8 +21,7 @@ public class EpochBlock extends AbstractTimelineEntity {
         this.epochs = new LinkedList<>();
     }
 
-    protected EpochBlock() {
-    }
+    protected EpochBlock() {}
 
     @ManyToOne
     private EpochGroup epochGroup;

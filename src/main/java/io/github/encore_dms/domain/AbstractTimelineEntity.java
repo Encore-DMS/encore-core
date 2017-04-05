@@ -18,8 +18,7 @@ abstract class AbstractTimelineEntity extends AbstractAnnotatableEntity implemen
         this.endTime = end;
     }
 
-    protected AbstractTimelineEntity() {
-    }
+    protected AbstractTimelineEntity() {}
 
     @Basic
     private ZonedDateTime startTime;

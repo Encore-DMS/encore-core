@@ -22,8 +22,7 @@ public class Project extends AbstractTimelineEntity {
         this.experiments = new LinkedList<>();
     }
 
-    protected Project() {
-    }
+    protected Project() {}
 
     @Basic
     private String name;

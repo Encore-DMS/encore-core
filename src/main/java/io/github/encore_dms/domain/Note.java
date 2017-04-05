@@ -8,14 +8,13 @@ import java.time.ZonedDateTime;
 @javax.persistence.Entity
 public class Note extends AbstractEntity {
 
-    public Note(DataContext context, User owner, ZonedDateTime time, String text) {
-        super(context, owner);
+    public Note(DataContext context, ZonedDateTime time, String text) {
+        super(context);
         this.time = time;
         this.text = text;
     }
 
-    protected Note() {
-    }
+    protected Note() {}
 
     @Basic
     private ZonedDateTime time;

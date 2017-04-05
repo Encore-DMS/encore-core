@@ -1,6 +1,7 @@
 package io.github.encore_dms.domain;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import io.github.encore_dms.AbstractTest;
@@ -11,6 +12,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +37,122 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         when(context.getAuthenticatedUser()).thenReturn(user);
 
         entity = spy(new AbstractAnnotatableEntity(context, null) {});
+    }
+
+    @Test
+    public void addProperty() {
+        String key = "myKey";
+        Integer value = 15;
+
+        entity.addProperty(key, value);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        Map<User, Map<String, Serializable>> properties = entity.getProperties();
+
+        assertEquals(1, properties.keySet().size());
+        assertEquals(1, properties.get(user).size());
+        assertEquals(value, properties.get(user).get(key));
+    }
+
+    @Test
+    public void addProperties() {
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+
+        Map<User, Map<String, Serializable>> expected = new HashMap<>();
+        expected.put(user1, ImmutableMap.of("one", 1, "two", 2));
+        expected.put(user2, ImmutableMap.of("three", 3, "four", 4));
+
+        for (Map.Entry<User, Map<String, Serializable>> e : expected.entrySet()) {
+            when(context.getAuthenticatedUser()).thenReturn(e.getKey());
+            for (Map.Entry<String, Serializable> v : e.getValue().entrySet()) {
+                entity.addProperty(v.getKey(), v.getValue());
+            }
+        }
+
+        assertEquals(expected, entity.getProperties());
+    }
+
+    @Test
+    public void removeProperty() {
+        Map<String, Serializable> expected = new HashMap<>(ImmutableMap.of("one", 1, "two", 2, "three", 3));
+
+        for (Map.Entry<String, Serializable> e : expected.entrySet()) {
+            entity.addProperty(e.getKey(), e.getValue());
+        }
+
+        entity.removeProperty("two");
+        expected.remove("two");
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        Map<User, Map<String, Serializable>> properties = entity.getProperties();
+
+        assertEquals(1, properties.keySet().size());
+        assertEquals(expected, properties.get(user));
+    }
+
+    @Test
+    public void removeProperties() {
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+
+        Map<User, Map<String, Serializable>> expected = new HashMap<>();
+        expected.put(user1, new HashMap<>(ImmutableMap.of("one", 1, "two", 2)));
+        expected.put(user2, new HashMap<>(ImmutableMap.of("three", 3, "four", 4)));
+
+        for (Map.Entry<User, Map<String, Serializable>> e : expected.entrySet()) {
+            when(context.getAuthenticatedUser()).thenReturn(e.getKey());
+            for (Map.Entry<String, Serializable> v : e.getValue().entrySet()) {
+                entity.addProperty(v.getKey(), v.getValue());
+            }
+        }
+
+        when(context.getAuthenticatedUser()).thenReturn(user1);
+        entity.removeProperty("two");
+        expected.get(user1).remove("two");
+
+        when(context.getAuthenticatedUser()).thenReturn(user2);
+        entity.removeProperty("four");
+        expected.get(user2).remove("four");
+
+        assertEquals(expected, entity.getProperties());
+    }
+
+    @Test
+    public void getProperty() {
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+
+        Map<User, Serializable> expected = new HashMap<>(ImmutableMap.of(user1, "1_1", user2, "1_2"));
+
+        when(context.getAuthenticatedUser()).thenReturn(user1);
+        entity.addProperty("one", expected.get(user1));
+        entity.addProperty("two", 2_1);
+
+        when(context.getAuthenticatedUser()).thenReturn(user2);
+        entity.addProperty("one", expected.get(user2));
+        entity.addProperty("two", 2_2);
+
+        assertEquals(expected, entity.getProperty("one"));
+    }
+
+    @Test void getUserProperty() {
+        User user1 = mock(User.class);
+        User user2 = mock(User.class);
+
+        when(context.getAuthenticatedUser()).thenReturn(user1);
+        entity.addProperty("one", 1_1);
+
+        when(context.getAuthenticatedUser()).thenReturn(user2);
+        entity.addProperty("one", 1_2);
+
+        assertEquals(1_1, entity.getUserProperty(user1, "one"));
     }
 
     @Test
@@ -115,16 +233,6 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         expected.remove(user2, "five");
 
         assertEquals(expected, entity.getKeywords());
-    }
-
-    @Test
-    public void getKeywordsUsesUnmodifiableView() {
-        String keyword = "hello";
-        entity.addKeyword(keyword);
-
-        Multimap<User, String> keywords = entity.getKeywords();
-
-        assertThrows(UnsupportedOperationException.class, () -> keywords.remove(user, keyword));
     }
 
     @Test
