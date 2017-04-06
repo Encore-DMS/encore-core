@@ -2,7 +2,7 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.*;
+import javax.persistence.OneToMany;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

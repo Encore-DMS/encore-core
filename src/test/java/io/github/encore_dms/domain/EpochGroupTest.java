@@ -102,6 +102,7 @@ public class EpochGroupTest extends AbstractTest {
         assertEquals(protocolId, b.getProtocolId());
         assertEquals(start, b.getStartTime());
         assertEquals(end, b.getEndTime());
+        assertEquals(group, b.getEpochGroup());
     }
 
     @Test

@@ -2,7 +2,7 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.*;
+import javax.persistence.Lob;
 import java.io.Serializable;
 
 @javax.persistence.Entity

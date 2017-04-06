@@ -3,7 +3,6 @@ package io.github.encore_dms.domain;
 import io.github.encore_dms.DataContext;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.ManyToOne;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;

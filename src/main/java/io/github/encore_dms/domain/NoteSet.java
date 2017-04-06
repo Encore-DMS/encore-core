@@ -2,7 +2,6 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.util.HashSet;
