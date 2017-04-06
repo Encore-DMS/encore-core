@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-abstract class AbstractTimelineEntity extends AbstractAnnotatableEntity implements TimelineElement {
+abstract class AbstractTimelineEntity extends AbstractResourceAnnotatableEntity implements TimelineElement {
 
     AbstractTimelineEntity(DataContext context, User owner, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner);

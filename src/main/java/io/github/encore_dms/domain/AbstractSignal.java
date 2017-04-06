@@ -10,7 +10,7 @@ import java.util.Map;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class AbstractSignal extends AbstractAnnotatableEntity {
+public class AbstractSignal extends AbstractResourceAnnotatableEntity {
 
     AbstractSignal(DataContext context, User owner, Epoch epoch, Device device, Map<String, Object> deviceParameters, String units) {
         super(context, owner);
