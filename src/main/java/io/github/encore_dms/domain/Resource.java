@@ -6,7 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Lob;
 
 @javax.persistence.Entity
-public class Resource extends AbstractAnnotatableEntity {
+public class Resource extends AbstractResourceAnnotatableEntity {
 
     public Resource(DataContext context, User owner, String name, byte[] data, String uti) {
         super(context, owner);

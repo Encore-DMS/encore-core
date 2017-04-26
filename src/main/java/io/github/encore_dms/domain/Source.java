@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
-public class Source extends AbstractAnnotatableEntity {
+public class Source extends AbstractResourceAnnotatableEntity {
 
     public Source(DataContext context, User owner, Experiment experiment, Source parent, String label, ZonedDateTime creationTime, String identifier) {
         super(context, owner);

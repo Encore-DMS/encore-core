@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Device extends AbstractAnnotatableEntity {
+public class Device extends AbstractResourceAnnotatableEntity {
 
     public Device(DataContext context, User owner, Experiment experiment, String name, String manufacturer) {
         super(context, owner);
