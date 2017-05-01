@@ -4,14 +4,22 @@
     <persistence-unit name="Main" transaction-type="RESOURCE_LOCAL">
         <class>io.github.encore_dms.domain.AbstractAnnotatableEntity</class>
         <class>io.github.encore_dms.domain.AbstractEntity</class>
+        <class>io.github.encore_dms.domain.AbstractResourceAnnotatableEntity</class>
         <class>io.github.encore_dms.domain.AbstractSignal</class>
         <class>io.github.encore_dms.domain.AbstractTimelineEntity</class>
+        <class>io.github.encore_dms.domain.Background</class>
         <class>io.github.encore_dms.domain.Device</class>
         <class>io.github.encore_dms.domain.Epoch</class>
         <class>io.github.encore_dms.domain.EpochBlock</class>
         <class>io.github.encore_dms.domain.EpochGroup</class>
         <class>io.github.encore_dms.domain.Experiment</class>
+        <class>io.github.encore_dms.domain.KeywordSet</class>
+        <class>io.github.encore_dms.domain.Note</class>
+        <class>io.github.encore_dms.domain.NoteSet</class>
         <class>io.github.encore_dms.domain.Project</class>
+        <class>io.github.encore_dms.domain.PropertyMap</class>
+        <class>io.github.encore_dms.domain.PropertyValue</class>
+        <class>io.github.encore_dms.domain.Resource</class>
         <class>io.github.encore_dms.domain.Response</class>
         <class>io.github.encore_dms.domain.Source</class>
         <class>io.github.encore_dms.domain.Stimulus</class>
