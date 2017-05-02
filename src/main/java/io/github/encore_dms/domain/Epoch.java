@@ -31,7 +31,7 @@ public class Epoch extends AbstractTimelineEntity {
         return epochBlock;
     }
 
-    @OneToMany(mappedBy = "epoch")
+    @OneToMany(mappedBy = "epoch", targetEntity = AbstractSignal.class)
     private List<Response> responses;
 
     public Response insertResponse(Device device, Map<String, Object> deviceParameters, List<Double> data, String units, double sampleRate, String sampleRateUnits) {
@@ -48,7 +48,7 @@ public class Epoch extends AbstractTimelineEntity {
         return responses.stream();
     }
 
-    @OneToMany(mappedBy = "epoch")
+    @OneToMany(mappedBy = "epoch", targetEntity = AbstractSignal.class)
     private List<Stimulus> stimuli;
 
     public Stimulus insertStimulus(Device device, Map<String, Object> deviceParameters, String stimulusId, Map<String, Object> parameters, String units, List<Double> data) {
@@ -65,7 +65,7 @@ public class Epoch extends AbstractTimelineEntity {
         return stimuli.stream();
     }
 
-    @OneToMany(mappedBy = "epoch")
+    @OneToMany(mappedBy = "epoch", targetEntity = AbstractSignal.class)
     private List<Background> backgrounds;
 
     public Background insertBackground(Device device, Map<String, Object> deviceParameters, double value, String units, double sampleRate, String sampleRateUnits) {
