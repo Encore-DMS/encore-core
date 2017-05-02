@@ -16,7 +16,7 @@ public class DefaultDataStoreCoordinatorConnection implements DataStoreCoordinat
 
     public DataStoreCoordinator connect(String host, String username, String password) {
         DataStore store = primaryDataStoreFactory.create(host, username, password);
-        return dataStoreCoordinatorFactory.create(store);
+        return dataStoreCoordinatorFactory.create(username, store);
     }
 
 }

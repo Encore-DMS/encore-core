@@ -6,12 +6,15 @@ import io.github.encore_dms.data.DataStore;
 
 public class DefaultDataStoreCoordinator implements DataStoreCoordinator {
 
+    private final String authenticatedUser;
+
     private DataStore primaryDataStore;
 
     private final DataContext.Factory dataContextFactory;
 
     @Inject
-    public DefaultDataStoreCoordinator(@Assisted DataStore primaryDataStore, DataContext.Factory dataContextFactory) {
+    public DefaultDataStoreCoordinator(@Assisted String authenticatedUser, @Assisted DataStore primaryDataStore, DataContext.Factory dataContextFactory) {
+        this.authenticatedUser = authenticatedUser;
         this.primaryDataStore = primaryDataStore;
         this.dataContextFactory = dataContextFactory;
     }
@@ -28,6 +31,16 @@ public class DefaultDataStoreCoordinator implements DataStoreCoordinator {
     @Override
     public DataStore getPrimaryDataStore() {
         return primaryDataStore;
+    }
+
+    @Override
+    public String getAuthenticatedUser() {
+        return authenticatedUser;
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return getAuthenticatedUser() != null;
     }
 
 }

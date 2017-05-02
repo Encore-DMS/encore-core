@@ -10,6 +10,8 @@ public interface EntityRepository {
 
     Stream<Project> getProjects();
 
+    User getUser(String username);
+
     void persist(Entity entity);
 
     <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass);

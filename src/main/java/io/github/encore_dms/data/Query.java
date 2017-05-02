@@ -19,4 +19,8 @@ public class Query<T> {
         return this;
     }
 
+    public T getSingleResult() {
+        return query.getSingleResult();
+    }
+
 }

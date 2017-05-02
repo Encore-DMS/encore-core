@@ -8,12 +8,16 @@ public interface DataStoreCoordinator {
 
     DataStore getPrimaryDataStore();
 
+    String getAuthenticatedUser();
+
+    boolean isAuthenticated();
+
     interface Connection {
         DataStoreCoordinator connect(String host, String username, String password);
     }
 
     interface Factory {
-        DataStoreCoordinator create(DataStore primaryDataStore);
+        DataStoreCoordinator create(String authenticatedUser, DataStore primaryDataStore);
     }
 
 }

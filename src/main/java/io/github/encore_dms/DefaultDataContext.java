@@ -22,6 +22,8 @@ public class DefaultDataContext implements DataContext {
     private final DataStoreCoordinator dataStoreCoordinator;
     private final TransactionManager transactionManager;
 
+    private User authenticatedUser;
+
     @Inject
     DefaultDataContext(@Assisted DataStore dataStore, @Assisted DataStoreCoordinator dataStoreCoordinator, EntityRepository.Factory entityRepositoryFactory) {
         this.dataStoreCoordinator = dataStoreCoordinator;
@@ -76,7 +78,14 @@ public class DefaultDataContext implements DataContext {
 
     @Override
     public User getAuthenticatedUser() {
-        return null;
+        String name = dataStoreCoordinator.getAuthenticatedUser();
+        if (name == null) {
+            return null;
+        }
+        if (authenticatedUser == null) {
+            authenticatedUser = entityRepository.getUser(name);
+        }
+        return authenticatedUser;
     }
 
     @Override

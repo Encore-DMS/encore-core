@@ -25,6 +25,13 @@ public class DefaultEntityRepository implements EntityRepository {
     }
 
     @Override
+    public User getUser(String username) {
+        return createNamedQuery("User.findByUsername", User.class)
+                .setParameter("username", username)
+                .getSingleResult();
+    }
+
+    @Override
     public void persist(Entity entity) {
         dao.persist(entity);
     }
