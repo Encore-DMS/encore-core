@@ -2,16 +2,18 @@ package io.github.encore_dms.data;
 
 import io.github.encore_dms.domain.Entity;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class DefaultEntityDao implements EntityDao {
 
-    private final EntityManager entityManager;
+    private final Session session;
 
-    public DefaultEntityDao(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public DefaultEntityDao(Session session) {
+        this.session = session;
     }
 
     @Override
@@ -21,24 +23,26 @@ public class DefaultEntityDao implements EntityDao {
 
     @Override
     public <T extends Entity> Stream<T> getAll(String entityName, Class<T> entityType) {
-        return createQuery("SELECT e FROM " + entityName + " e", entityType).stream();
+        return query("SELECT e FROM " + entityName + " e", entityType);
     }
 
     @Override
     public void persist(Entity entity) {
-        entityManager.persist(entity);
+        session.persist(entity);
     }
 
     @Override
-    public <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass) {
-        Session session = entityManager.unwrap(Session.class);
-        return new Query<>(session.createQuery(qlString, resultClass));
+    public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
+        return session.createQuery(qlString, resultClass).stream();
     }
 
     @Override
-    public <T extends Entity> Query<T> createNamedQuery(String name, Class<T> resultClass) {
-        Session session = entityManager.unwrap(Session.class);
-        return new Query<>(session.createNamedQuery(name, resultClass));
+    public <T extends Entity> Stream<T> namedQuery(String name, Map<String, Object> parameters, Class<T> resultClass) {
+        Query<T> query = session.createNamedQuery(name, resultClass);
+        for (Map.Entry<String, Object> p : parameters.entrySet()) {
+            query.setParameter(p.getKey(), p.getValue());
+        }
+        return query.stream();
     }
 
 }

@@ -6,6 +6,10 @@ public class EncoreException extends RuntimeException {
         super(s, t);
     }
 
+    public EncoreException(Throwable t) {
+        super(t);
+    }
+
     public EncoreException(String s) {
         super(s);
     }

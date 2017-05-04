@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.DefaultTransactionManager;
 import io.github.encore_dms.TransactionManager;
+import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -32,7 +33,7 @@ public class InMemoryDataStore extends AbstractDataStore {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("Main", properties);
         EntityManager entityManager = factory.createEntityManager();
 
-        dao = new DefaultEntityDao(entityManager);
+        dao = new DefaultEntityDao(entityManager.unwrap(Session.class));
         transactionManager = new DefaultTransactionManager(entityManager.getTransaction());
     }
 

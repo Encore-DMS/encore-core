@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.physion.ebuilder.expression.ExpressionTree;
 import com.physion.ebuilder.expression.IExpression;
 import io.github.encore_dms.data.DataStore;
+import io.github.encore_dms.data.EntityDao;
 import io.github.encore_dms.domain.Entity;
 import io.github.encore_dms.domain.EntityRepository;
 import io.github.encore_dms.domain.Project;
@@ -18,8 +19,9 @@ import java.util.stream.Stream;
 
 public class DefaultDataContext implements DataContext {
 
-    private final EntityRepository entityRepository;
     private final DataStoreCoordinator dataStoreCoordinator;
+    private final EntityDao dao;
+    private final EntityRepository entityRepository;
     private final TransactionManager transactionManager;
 
     private User authenticatedUser;
@@ -27,13 +29,14 @@ public class DefaultDataContext implements DataContext {
     @Inject
     DefaultDataContext(@Assisted DataStore dataStore, @Assisted DataStoreCoordinator dataStoreCoordinator, EntityRepository.Factory entityRepositoryFactory) {
         this.dataStoreCoordinator = dataStoreCoordinator;
-        this.entityRepository = entityRepositoryFactory.create(dataStore.getDao(), this);
+        this.dao = dataStore.getDao();
+        this.entityRepository = entityRepositoryFactory.create(this.dao, this);
         this.transactionManager = dataStore.getTransactionManager();
     }
 
     @Override
     public <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass) {
-        return getRepository().createQuery(qlString, resultClass).stream();
+        return dao.query(qlString, resultClass);
     }
 
     @Override
@@ -83,7 +86,7 @@ public class DefaultDataContext implements DataContext {
             return null;
         }
         if (authenticatedUser == null) {
-            authenticatedUser = entityRepository.getUser(name);
+            authenticatedUser = entityRepository.getUserWithUsername(name);
         }
         return authenticatedUser;
     }

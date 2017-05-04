@@ -1,11 +1,13 @@
 package io.github.encore_dms.domain;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.data.EntityDao;
-import io.github.encore_dms.data.Query;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class DefaultEntityRepository implements EntityRepository {
@@ -25,10 +27,9 @@ public class DefaultEntityRepository implements EntityRepository {
     }
 
     @Override
-    public User getUser(String username) {
-        return createNamedQuery("User.findByUsername", User.class)
-                .setParameter("username", username)
-                .getSingleResult();
+    public User getUserWithUsername(String username) {
+        return dao.namedQuery("User.findByUsername", ImmutableMap.of("username", username), User.class)
+                .findFirst().orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -36,13 +37,4 @@ public class DefaultEntityRepository implements EntityRepository {
         dao.persist(entity);
     }
 
-    @Override
-    public <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass) {
-        return dao.createQuery(qlString, resultClass);
-    }
-
-    @Override
-    public <T extends Entity> Query<T> createNamedQuery(String name, Class<T> resultClass) {
-        return dao.createNamedQuery(name, resultClass);
-    }
 }

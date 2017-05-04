@@ -2,6 +2,7 @@ package io.github.encore_dms.data;
 
 import io.github.encore_dms.domain.Entity;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 public interface EntityDao {
@@ -12,8 +13,8 @@ public interface EntityDao {
 
     void persist(Entity entity);
 
-    <T extends Entity> Query<T> createQuery(String qlString, Class<T> resultClass);
+    <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);
 
-    <T extends Entity> Query<T> createNamedQuery(String name, Class<T> resultClass);
+    <T extends Entity> Stream<T> namedQuery(String name, Map<String, Object> parameters, Class<T> resultClass);
 
 }
