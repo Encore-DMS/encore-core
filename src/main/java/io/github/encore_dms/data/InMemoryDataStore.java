@@ -4,6 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.DefaultTransactionManager;
 import io.github.encore_dms.TransactionManager;
+import io.github.encore_dms.domain.User;
+import io.github.encore_dms.exceptions.EncoreException;
+import io.github.encore_dms.util.TransactionUtilities;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -35,6 +38,11 @@ public class InMemoryDataStore extends AbstractDataStore {
 
         dao = new DefaultEntityDao(entityManager.unwrap(Session.class));
         transactionManager = new DefaultTransactionManager(entityManager.getTransaction());
+
+        TransactionUtilities.transactionWrapped(transactionManager, () -> {
+            User u = new User(null, getUsername(), getPassword());
+            dao.persist(u);
+        });
     }
 
     @Override
