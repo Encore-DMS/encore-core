@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.Assisted;
 import io.github.encore_dms.DefaultTransactionManager;
 import io.github.encore_dms.TransactionManager;
 import io.github.encore_dms.domain.User;
-import io.github.encore_dms.exceptions.EncoreException;
 import io.github.encore_dms.util.TransactionUtilities;
 import org.hibernate.Session;
 

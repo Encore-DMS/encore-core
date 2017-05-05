@@ -8,8 +8,11 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,10 +71,14 @@ public class SourceTest extends AbstractTest {
     @Test
     public void getChildren() {
         List<Source> expected = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            Source s = source.insertSource("label" + i, ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "identifier" + i);
-            expected.add(s);
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                Source s = source.insertSource("label" + (i * 5 + k), time, "id" + (i * 5 + k));
+                expected.add(s);
+            }
         }
+        expected.sort(Comparator.comparing(Source::getCreationTime));
 
         List<Source> actual = source.getChildren().collect(Collectors.toList());
 

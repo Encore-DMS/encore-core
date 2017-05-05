@@ -3,11 +3,10 @@ package io.github.encore_dms.domain;
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.SourceContainer;
 
-import javax.persistence.Basic;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -71,6 +70,7 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
     }
 
     @OneToMany(mappedBy = "parent")
+    @OrderBy("creationTime ASC")
     private List<Source> children;
 
     public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
@@ -79,6 +79,7 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
             Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label, creationTime, identifier);
             c.insertEntity(s);
             children.add(s);
+            children.sort(Comparator.comparing(Source::getCreationTime));
             return s;
         });
     }

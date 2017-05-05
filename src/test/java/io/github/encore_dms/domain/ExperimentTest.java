@@ -102,10 +102,14 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void getSources() {
         List<Source> expected = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            Source s = experiment.insertSource("label" + i, ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "id" + i);
-            expected.add(s);
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                Source s = experiment.insertSource("label" + (i * 5 + k), time, "id" + (i * 5 + k));
+                expected.add(s);
+            }
         }
+        expected.sort(Comparator.comparing(Source::getCreationTime));
 
         List<Source> actual = experiment.getSources().collect(Collectors.toList());
 

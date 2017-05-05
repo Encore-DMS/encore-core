@@ -7,7 +7,6 @@ import io.github.encore_dms.DataContext;
 import io.github.encore_dms.data.EntityDao;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Map;
 import java.util.stream.Stream;
 
 public class DefaultEntityRepository implements EntityRepository {

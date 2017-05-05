@@ -57,6 +57,7 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
     }
 
     @OneToMany(mappedBy = "experiment")
+    @OrderBy("creationTime ASC")
     private List<Source> sources;
 
     public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
@@ -65,6 +66,7 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
             Source s = new Source(c, c.getAuthenticatedUser(), this, null, label, creationTime, identifier);
             c.insertEntity(s);
             sources.add(s);
+            sources.sort(Comparator.comparing(Source::getCreationTime));
             return s;
         });
     }
