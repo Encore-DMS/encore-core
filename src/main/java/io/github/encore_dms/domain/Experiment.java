@@ -1,6 +1,8 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.mixin.EpochGroupContainer;
+import io.github.encore_dms.domain.mixin.SourceContainer;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -9,7 +11,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Entity
-public class Experiment extends AbstractTimelineEntity {
+public class Experiment extends AbstractTimelineEntity implements SourceContainer, EpochGroupContainer {
 
     public Experiment(DataContext context, User owner, Project project, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
@@ -71,8 +73,8 @@ public class Experiment extends AbstractTimelineEntity {
         return sources.stream();
     }
 
-    public Stream<Source> getSourcesWithIdentifier(String identifier) {
-        return getSources().filter(s -> Objects.equals(s.getIdentifier(), identifier));
+    public Stream<Source> getAllSources() {
+        return Stream.concat(getSources(), getSources().flatMap(Source::getAllChildren));
     }
 
     @OneToMany(mappedBy = "experiment")
@@ -115,6 +117,11 @@ public class Experiment extends AbstractTimelineEntity {
 
     public Stream<EpochGroup> getEpochGroups() {
         return epochGroups.stream();
+    }
+
+    public Stream<EpochGroup> getAllEpochGroups() {
+        return Stream.concat(getEpochGroups(), getEpochGroups().flatMap(EpochGroup::getAllChildren))
+                .sorted(Comparator.comparing(AbstractTimelineEntity::getStartTime));
     }
 
 }

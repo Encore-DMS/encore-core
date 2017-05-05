@@ -1,6 +1,7 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.mixin.SourceContainer;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
-public class Source extends AbstractResourceAnnotatableEntity {
+public class Source extends AbstractResourceAnnotatableEntity implements SourceContainer {
 
     public Source(DataContext context, User owner, Experiment experiment, Source parent, String label, ZonedDateTime creationTime, String identifier) {
         super(context, owner);
@@ -82,8 +83,16 @@ public class Source extends AbstractResourceAnnotatableEntity {
         });
     }
 
+    public Stream<Source> getSources() {
+        return getChildren();
+    }
+
     public Stream<Source> getChildren() {
         return children.stream();
+    }
+
+    public Stream<Source> getAllChildren() {
+        return Stream.concat(getChildren(), getChildren().flatMap(Source::getAllChildren));
     }
 
 }

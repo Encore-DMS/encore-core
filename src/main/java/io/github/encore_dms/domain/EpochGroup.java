@@ -1,6 +1,7 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.mixin.EpochGroupContainer;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @Entity
-public class EpochGroup extends AbstractTimelineEntity {
+public class EpochGroup extends AbstractTimelineEntity implements EpochGroupContainer {
 
     public EpochGroup(DataContext context, User owner, Experiment experiment, EpochGroup parent, Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
@@ -73,8 +74,16 @@ public class EpochGroup extends AbstractTimelineEntity {
         });
     }
 
+    public Stream<EpochGroup> getEpochGroups() {
+        return getChildren();
+    }
+
     public Stream<EpochGroup> getChildren() {
         return children.stream();
+    }
+
+    public Stream<EpochGroup> getAllChildren() {
+        return Stream.concat(getChildren(), getChildren().flatMap(EpochGroup::getAllChildren));
     }
 
     @OneToMany(mappedBy = "epochGroup")

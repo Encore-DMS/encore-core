@@ -2,6 +2,8 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.AbstractTest;
 import io.github.encore_dms.DataContext;
+import io.github.encore_dms.domain.mixin.EpochGroupContainer;
+import io.github.encore_dms.domain.mixin.SourceContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -111,16 +113,16 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
-    public void getSourcesWithIdentifier() {
+    public void getAllSources() {
         List<Source> expected = new ArrayList<>();
+        SourceContainer parent = experiment;
+        for (int i = 0; i < 3; i++) {
+            Source s = parent.insertSource("label" + i, ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "identifier" + i);
+            expected.add(s);
+            parent = s;
+        }
 
-        ZonedDateTime creationTime = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
-        experiment.insertSource("label1", creationTime, "id1");
-        expected.add(experiment.insertSource("label2", creationTime, "id2"));
-        experiment.insertSource("label3", creationTime, "id3");
-        expected.add(experiment.insertSource("label4", creationTime, "id2"));
-
-        List<Source> actual = experiment.getSourcesWithIdentifier("id2").collect(Collectors.toList());
+        List<Source> actual = experiment.getAllSources().collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
@@ -200,6 +202,25 @@ public class ExperimentTest extends AbstractTest {
         expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
 
         List<EpochGroup> actual = experiment.getEpochGroups().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getAllEpochGroups() {
+        List<EpochGroup> expected = new ArrayList<>();
+        EpochGroupContainer parent = experiment;
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                EpochGroup g = parent.insertEpochGroup(null, "label" + (i * 5 + k), time, time.plusMinutes(i));
+                expected.add(g);
+                parent = g;
+            }
+        }
+        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+
+        List<EpochGroup> actual = experiment.getAllEpochGroups().collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }

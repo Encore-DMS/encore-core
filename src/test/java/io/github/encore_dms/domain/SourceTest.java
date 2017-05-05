@@ -78,4 +78,19 @@ public class SourceTest extends AbstractTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void getAllChildren() {
+        List<Source> expected = new ArrayList<>();
+        Source parent = source;
+        for (int i = 0; i < 3; i++) {
+            Source s = parent.insertSource("label" + i, ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]"), "identifier" + i);
+            expected.add(s);
+            parent = s;
+        }
+
+        List<Source> actual = source.getAllChildren().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
 }
