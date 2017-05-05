@@ -93,7 +93,8 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
     }
 
     public Stream<Source> getAllChildren() {
-        return Stream.concat(getChildren(), getChildren().flatMap(Source::getAllChildren));
+        return Stream.concat(getChildren(), getChildren().flatMap(Source::getAllChildren))
+                .sorted(Comparator.comparing(Source::getCreationTime));
     }
 
 }

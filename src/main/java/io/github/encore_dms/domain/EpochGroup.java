@@ -83,7 +83,8 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
     }
 
     public Stream<EpochGroup> getAllChildren() {
-        return Stream.concat(getChildren(), getChildren().flatMap(EpochGroup::getAllChildren));
+        return Stream.concat(getChildren(), getChildren().flatMap(EpochGroup::getAllChildren))
+                .sorted(Comparator.comparing(EpochGroup::getStartTime));
     }
 
     @OneToMany(mappedBy = "epochGroup")

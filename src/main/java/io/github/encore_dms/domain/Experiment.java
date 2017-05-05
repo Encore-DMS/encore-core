@@ -76,7 +76,8 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
     }
 
     public Stream<Source> getAllSources() {
-        return Stream.concat(getSources(), getSources().flatMap(Source::getAllChildren));
+        return Stream.concat(getSources(), getSources().flatMap(Source::getAllChildren))
+                .sorted(Comparator.comparing(Source::getCreationTime));
     }
 
     @OneToMany(mappedBy = "experiment")

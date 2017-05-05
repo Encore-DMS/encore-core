@@ -87,6 +87,25 @@ public class EpochGroupTest extends AbstractTest {
     }
 
     @Test
+    public void getAllChildren() {
+        List<EpochGroup> expected = new ArrayList<>();
+        EpochGroup parent = group;
+        for (int i = 0; i < 2; i++) {
+            for (int k = 0; k < 5; k++) {
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(k), ZoneId.of("America/Los_Angeles"));
+                EpochGroup g = parent.insertEpochGroup(null, "label" + (i * 5 + k), time, time.plusMinutes(i));
+                expected.add(g);
+                parent = g;
+            }
+        }
+        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+
+        List<EpochGroup> actual = group.getAllChildren().collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void insertEpochBlock() {
         String protocolId = "protocol.test";
         Map<String, Object> protocolParameters = new HashMap<>();
