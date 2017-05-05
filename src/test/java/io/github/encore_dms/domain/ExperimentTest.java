@@ -136,6 +136,25 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
+    public void getAllSourcesWithIdentifier() {
+        List<Source> expected = new ArrayList<>();
+
+        ZonedDateTime time = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
+        Source src1 = experiment.insertSource("label1", time.plusSeconds(111), "id1");
+        Source src2 = src1.insertSource("label2", time.plusSeconds(2), "id2");
+        Source src3 = src1.insertSource("label3", time.plusSeconds(3), "id3");
+        Source src4 = src3.insertSource("label4", time.plusSeconds(4), "id2");
+
+        expected.add(src2);
+        expected.add(src4);
+        expected.sort(Comparator.comparing(Source::getCreationTime));
+
+        List<Source> actual = experiment.getAllSourcesWithIdentifier("id2").collect(Collectors.toList());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void insertDevice() {
         String name = "device";
         String manufacturer = "acme";
