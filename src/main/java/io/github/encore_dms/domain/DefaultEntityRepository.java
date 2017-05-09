@@ -22,7 +22,7 @@ public class DefaultEntityRepository implements EntityRepository {
 
     @Override
     public Stream<Project> getProjects() {
-        return dao.getAll(Project.class);
+        return dao.namedQuery("Project.findAll", Project.class);
     }
 
     @Override

@@ -2,10 +2,8 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 
-import javax.persistence.Basic;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -13,6 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
+@NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p ORDER BY p.startTime")
 public class Project extends AbstractTimelineEntity {
 
     public Project(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {

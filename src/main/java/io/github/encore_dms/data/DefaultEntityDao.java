@@ -36,6 +36,11 @@ public class DefaultEntityDao implements EntityDao {
     }
 
     @Override
+    public <T extends Entity> Stream<T> namedQuery(String name, Class<T> resultClass) {
+        return session.createNamedQuery(name, resultClass).stream();
+    }
+
+    @Override
     public <T extends Entity> Stream<T> namedQuery(String name, Map<String, Object> parameters, Class<T> resultClass) {
         Query<T> query = session.createNamedQuery(name, resultClass);
         for (Map.Entry<String, Object> p : parameters.entrySet()) {

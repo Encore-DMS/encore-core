@@ -15,6 +15,8 @@ public interface EntityDao {
 
     <T extends Entity> Stream<T> query(String qlString, Class<T> resultClass);
 
+    <T extends Entity> Stream<T> namedQuery(String name, Class<T> resultClass);
+
     <T extends Entity> Stream<T> namedQuery(String name, Map<String, Object> parameters, Class<T> resultClass);
 
 }
