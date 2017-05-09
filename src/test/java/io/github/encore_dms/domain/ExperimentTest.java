@@ -140,7 +140,7 @@ public class ExperimentTest extends AbstractTest {
         List<Source> expected = new ArrayList<>();
 
         ZonedDateTime time = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
-        Source src1 = experiment.insertSource("label1", time.plusSeconds(111), "id1");
+        Source src1 = experiment.insertSource("label1", time.plusSeconds(1), "id1");
         Source src2 = src1.insertSource("label2", time.plusSeconds(2), "id2");
         Source src3 = src1.insertSource("label3", time.plusSeconds(3), "id3");
         Source src4 = src3.insertSource("label4", time.plusSeconds(4), "id2");
