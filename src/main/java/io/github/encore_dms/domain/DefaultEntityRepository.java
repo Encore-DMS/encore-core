@@ -28,7 +28,7 @@ public class DefaultEntityRepository implements EntityRepository {
     @Override
     public User getUserWithUsername(String username) {
         return dao.namedQuery("User.findByUsername", ImmutableMap.of("username", username), User.class)
-                .findFirst().orElseThrow(EntityNotFoundException::new);
+                .findFirst().orElse(null);
     }
 
     @Override

@@ -189,10 +189,9 @@ public class ExperimentTest extends AbstractTest {
         Device expected = experiment.insertDevice("name2", "man2");
         experiment.insertDevice("name3", "man2");
 
-        Optional<Device> actual = experiment.getDevice("name2", "man2");
+        Device actual = experiment.getDevice("name2", "man2");
 
-        assertTrue(actual.isPresent());
-        assertEquals(expected, actual.get());
+        assertEquals(expected, actual);
     }
 
     @Test

@@ -103,10 +103,10 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
         return devices.stream();
     }
 
-    public Optional<Device> getDevice(String name, String manufacturer) {
+    public Device getDevice(String name, String manufacturer) {
         return getDevices()
                 .filter(d -> Objects.equals(d.getName(), name) && Objects.equals(d.getManufacturer(), manufacturer))
-                .findFirst();
+                .findFirst().orElse(null);
     }
 
     @OneToMany(mappedBy = "experiment")
