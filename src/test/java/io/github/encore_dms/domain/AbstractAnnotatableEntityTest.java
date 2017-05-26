@@ -51,7 +51,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         inOrder.verify(context, atLeastOnce()).beginTransaction();
         inOrder.verify(context, atLeastOnce()).commitTransaction();
 
-        Map<User, Map<String, Serializable>> properties = entity.getProperties();
+        Map<User, Map<String, Object>> properties = entity.getProperties();
 
         assertEquals(1, properties.keySet().size());
         assertEquals(1, properties.get(user).size());
@@ -92,7 +92,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         inOrder.verify(context, atLeastOnce()).beginTransaction();
         inOrder.verify(context, atLeastOnce()).commitTransaction();
 
-        Map<User, Map<String, Serializable>> properties = entity.getProperties();
+        Map<User, Map<String, Object>> properties = entity.getProperties();
 
         assertEquals(1, properties.keySet().size());
         assertEquals(expected, properties.get(user));

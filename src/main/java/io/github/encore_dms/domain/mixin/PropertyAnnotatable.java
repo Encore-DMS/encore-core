@@ -9,14 +9,16 @@ public interface PropertyAnnotatable {
 
     void addProperty(String key, Serializable value);
 
+    void addProperty(String key, Object serializableValue);
+
     void removeProperty(String key);
 
-    Map<User, Map<String, Serializable>> getProperties();
+    Map<User, Map<String, Object>> getProperties();
 
-    Map<User, Serializable> getProperty(String key);
+    Map<User, Object> getProperty(String key);
 
-    Serializable getUserProperty(User user, String key);
+    Object getUserProperty(User user, String key);
 
-    Map<String, Serializable> getUserProperties(User user);
+    Map<String, Object> getUserProperties(User user);
 
 }

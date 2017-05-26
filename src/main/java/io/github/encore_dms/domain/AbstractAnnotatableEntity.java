@@ -61,6 +61,14 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
+    public void addProperty(String key, Object serializableValue) {
+        if (!(serializableValue instanceof Serializable))
+            throw new UnsupportedOperationException("Value must be instance of Serializable");
+
+        addProperty(key, (Serializable) serializableValue);
+    }
+
+    @Override
     public void removeProperty(String key) {
         transactionWrapped(() -> {
             DataContext c = getDataContext();
@@ -73,10 +81,10 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Map<User, Map<String, Serializable>> getProperties() {
-        Map<User, Map<String, Serializable>> result = new HashMap<>();
+    public Map<User, Map<String, Object>> getProperties() {
+        Map<User, Map<String, Object>> result = new HashMap<>();
         for (Map.Entry<User, PropertyMap> e : properties.entrySet()) {
-            Map<String, Serializable> value = new HashMap<>();
+            Map<String, Object> value = new HashMap<>();
             for (Map.Entry<String, PropertyValue> v : e.getValue().getProperties().entrySet()) {
                 value.put(v.getKey(), v.getValue().getValue());
             }
@@ -86,11 +94,11 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Map<User, Serializable> getProperty(String key) {
-        Map<User, Map<String, Serializable>> props = getProperties();
+    public Map<User, Object> getProperty(String key) {
+        Map<User, Map<String, Object>> props = getProperties();
 
-        Map<User, Serializable> result = new HashMap<>();
-        for (Map.Entry<User, Map<String, Serializable>> e : props.entrySet()) {
+        Map<User, Object> result = new HashMap<>();
+        for (Map.Entry<User, Map<String, Object>> e : props.entrySet()) {
             if (e.getValue().containsKey(key)) {
                 result.put(e.getKey(), e.getValue().get(key));
             }
@@ -99,8 +107,8 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Serializable getUserProperty(User user, String key) {
-        Map<String, Serializable> props = getUserProperties(user);
+    public Object getUserProperty(User user, String key) {
+        Map<String, Object> props = getUserProperties(user);
         if (!props.containsKey(key)) {
             return null;
         }
@@ -108,11 +116,11 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
     }
 
     @Override
-    public Map<String, Serializable> getUserProperties(User user) {
+    public Map<String, Object> getUserProperties(User user) {
         if (!properties.containsKey(user)) {
             return ImmutableMap.of();
         }
-        Map<String, Serializable> m = properties.get(user).getProperties().entrySet().stream()
+        Map<String, Object> m = properties.get(user).getProperties().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, kv -> kv.getValue().getValue()));
         return Collections.unmodifiableMap(m);
     }
