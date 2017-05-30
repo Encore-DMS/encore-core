@@ -2,14 +2,14 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.EpochGroupContainer;
+import org.hibernate.annotations.SortComparator;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @Entity
@@ -21,8 +21,8 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
         this.parent = parent;
         this.source = source;
         this.label = label;
-        this.children = new LinkedList<>();
-        this.epochBlocks = new LinkedList<>();
+        this.children = new TreeSet<>(new TimelineComparator());
+        this.epochBlocks = new TreeSet<>(new TimelineComparator());
     }
 
     protected EpochGroup() {}
@@ -60,8 +60,9 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
     }
 
     @OneToMany(mappedBy = "parent")
-    @OrderBy("startTime ASC")
-    private List<EpochGroup> children;
+    @SortComparator(TimelineComparator.class)
+    @OrderBy("startTime ASC, endTime ASC")
+    private SortedSet<EpochGroup> children;
 
     public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
@@ -69,7 +70,6 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
             EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), getExperiment(), this, source, label, start, end);
             c.insertEntity(g);
             children.add(g);
-            children.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             return g;
         });
     }
@@ -84,12 +84,13 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
 
     public Stream<EpochGroup> getAllChildren() {
         return Stream.concat(getChildren(), getChildren().flatMap(EpochGroup::getAllChildren))
-                .sorted(Comparator.comparing(EpochGroup::getStartTime));
+                .sorted(new TimelineComparator());
     }
 
     @OneToMany(mappedBy = "epochGroup")
-    @OrderBy("startTime ASC")
-    private List<EpochBlock> epochBlocks;
+    @SortComparator(TimelineComparator.class)
+    @OrderBy("startTime ASC, endTime ASC")
+    private SortedSet<EpochBlock> epochBlocks;
 
     public EpochBlock insertEpochBlock(String protocolId, Map<String, Object> protocolParameters, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
@@ -97,7 +98,6 @@ public class EpochGroup extends AbstractTimelineEntity implements EpochGroupCont
             EpochBlock b = new EpochBlock(c, c.getAuthenticatedUser(), this, protocolId, protocolParameters, start, end);
             c.insertEntity(b);
             epochBlocks.add(b);
-            epochBlocks.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             return b;
         });
     }

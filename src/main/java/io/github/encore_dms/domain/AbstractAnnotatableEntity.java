@@ -165,7 +165,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
 
     @Override
     public Stream<String> getAllKeywords() {
-        return keywords.values().stream().flatMap(KeywordSet::getKeywords);
+        return keywords.values().stream().flatMap(KeywordSet::getKeywords).sorted();
     }
 
     @Override
@@ -216,7 +216,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
 
     @Override
     public Stream<Note> getAllNotes() {
-        return notes.values().stream().flatMap(NoteSet::getNotes);
+        return notes.values().stream().flatMap(NoteSet::getNotes).sorted(new Note.TimeComparator());
     }
 
     @Override

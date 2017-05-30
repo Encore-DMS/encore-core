@@ -11,7 +11,10 @@ import org.mockito.MockitoAnnotations;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +65,7 @@ public class EpochBlockTest extends AbstractTest {
                 expected.add(e);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<Epoch> actual = block.getEpochs().collect(Collectors.toList());
 

@@ -2,13 +2,14 @@ package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.SourceContainer;
+import org.hibernate.annotations.SortComparator;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @Entity
@@ -21,7 +22,7 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
         this.label = label;
         this.creationTime = creationTime;
         this.identifier = identifier;
-        this.children = new LinkedList<>();
+        this.children = new TreeSet<>(new CreationTimeComparator());
     }
 
     protected Source() {}
@@ -70,8 +71,9 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
     }
 
     @OneToMany(mappedBy = "parent")
+    @SortComparator(CreationTimeComparator.class)
     @OrderBy("creationTime ASC")
-    private List<Source> children;
+    private SortedSet<Source> children;
 
     public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
         return transactionWrapped(() -> {
@@ -79,7 +81,6 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
             Source s = new Source(c, c.getAuthenticatedUser(), getExperiment(), this, label, creationTime, identifier);
             c.insertEntity(s);
             children.add(s);
-            children.sort(Comparator.comparing(Source::getCreationTime));
             return s;
         });
     }
@@ -94,7 +95,23 @@ public class Source extends AbstractResourceAnnotatableEntity implements SourceC
 
     public Stream<Source> getAllChildren() {
         return Stream.concat(getChildren(), getChildren().flatMap(Source::getAllChildren))
-                .sorted(Comparator.comparing(Source::getCreationTime));
+                .sorted(new CreationTimeComparator());
+    }
+
+    static class CreationTimeComparator implements Comparator<Source> {
+
+        @Override
+        public int compare(Source o1, Source o2) {
+            if (o1 == o2)
+                return 0;
+
+            int result = o1.getCreationTime().compareTo(o2.getCreationTime());
+            if (result != 0)
+                return result;
+
+            return o1.getUuid().compareTo(o2.getUuid());
+        }
+
     }
 
 }

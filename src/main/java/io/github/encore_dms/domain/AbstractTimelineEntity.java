@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 
 @javax.persistence.Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -36,4 +37,23 @@ abstract class AbstractTimelineEntity extends AbstractResourceAnnotatableEntity 
         return endTime;
     }
 
+    static class TimelineComparator implements Comparator<AbstractTimelineEntity> {
+
+        @Override
+        public int compare(AbstractTimelineEntity o1, AbstractTimelineEntity o2) {
+            if (o1 == o2)
+                return 0;
+
+            int result = o1.getStartTime().compareTo(o2.getStartTime());
+            if (result != 0)
+                return result;
+
+            result = o1.getEndTime().compareTo(o2.getEndTime());
+            if (result != 0)
+                return result;
+
+            return o1.getUuid().compareTo(o2.getUuid());
+        }
+
+    }
 }

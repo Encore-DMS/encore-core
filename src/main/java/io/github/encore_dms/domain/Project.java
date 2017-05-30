@@ -1,24 +1,24 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
+import org.hibernate.annotations.SortComparator;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @Entity
-@NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p ORDER BY p.startTime")
+@NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p ORDER BY p.startTime ASC, p.endTime ASC")
 public class Project extends AbstractTimelineEntity {
 
     public Project(DataContext context, User owner, String name, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
         this.name = name;
         this.purpose = purpose;
-        this.experiments = new LinkedList<>();
+        this.experiments = new TreeSet<>(new TimelineComparator());
     }
 
     protected Project() {}
@@ -46,8 +46,9 @@ public class Project extends AbstractTimelineEntity {
     }
 
     @ManyToMany
-    @OrderBy("startTime ASC")
-    private List<Experiment> experiments;
+    @SortComparator(TimelineComparator.class)
+    @OrderBy("startTime ASC, endTime ASC")
+    private SortedSet<Experiment> experiments;
 
     public Experiment insertExperiment(String purpose, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
@@ -55,16 +56,14 @@ public class Project extends AbstractTimelineEntity {
             Experiment e = new Experiment(c, c.getAuthenticatedUser(), this, purpose, start, end);
             c.insertEntity(e);
             experiments.add(e);
-            experiments.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             return e;
         });
     }
 
     public void addExperiment(Experiment experiment) {
         transactionWrapped(() -> {
-            if (!experiments.contains(experiment)) {
-                experiments.add(experiment);
-                experiments.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+            boolean added = experiments.add(experiment);
+            if (added) {
                 experiment.addProject(this);
             }
         });

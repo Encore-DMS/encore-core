@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,7 +106,7 @@ public class ProjectTest extends AbstractTest {
                 expected.add(e);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<Experiment> actual = project.getExperiments().collect(Collectors.toList());
 

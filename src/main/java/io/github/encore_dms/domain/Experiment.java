@@ -3,6 +3,8 @@ package io.github.encore_dms.domain;
 import io.github.encore_dms.DataContext;
 import io.github.encore_dms.domain.mixin.EpochGroupContainer;
 import io.github.encore_dms.domain.mixin.SourceContainer;
+import io.github.encore_dms.exceptions.EncoreException;
+import org.hibernate.annotations.SortComparator;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -15,27 +17,27 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
 
     public Experiment(DataContext context, User owner, Project project, String purpose, ZonedDateTime start, ZonedDateTime end) {
         super(context, owner, start, end);
-        this.projects = new LinkedList<>();
+        this.projects = new TreeSet<>(new TimelineComparator());
         if (project != null) {
             this.projects.add(project);
         }
         this.purpose = purpose;
-        this.sources = new LinkedList<>();
-        this.devices = new LinkedHashSet<>();
-        this.epochGroups = new LinkedList<>();
+        this.sources = new TreeSet<>(new Source.CreationTimeComparator());
+        this.devices = new LinkedList<>();
+        this.epochGroups = new TreeSet<>(new TimelineComparator());
     }
 
     protected Experiment() {}
 
     @ManyToMany(mappedBy = "experiments")
-    @OrderBy("startTime ASC")
-    private List<Project> projects;
+    @SortComparator(TimelineComparator.class)
+    @OrderBy("startTime ASC, endTime ASC")
+    private SortedSet<Project> projects;
 
     public void addProject(Project project) {
         transactionWrapped(() -> {
-            if (!projects.contains(project)) {
-                projects.add(project);
-                projects.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+            boolean added = projects.add(project);
+            if (added) {
                 project.addExperiment(this);
             }
         });
@@ -57,8 +59,9 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
     }
 
     @OneToMany(mappedBy = "experiment")
+    @SortComparator(Source.CreationTimeComparator.class)
     @OrderBy("creationTime ASC")
-    private List<Source> sources;
+    private SortedSet<Source> sources;
 
     public Source insertSource(String label, ZonedDateTime creationTime, String identifier) {
         return transactionWrapped(() -> {
@@ -66,7 +69,6 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
             Source s = new Source(c, c.getAuthenticatedUser(), this, null, label, creationTime, identifier);
             c.insertEntity(s);
             sources.add(s);
-            sources.sort(Comparator.comparing(Source::getCreationTime));
             return s;
         });
     }
@@ -77,19 +79,22 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
 
     public Stream<Source> getAllSources() {
         return Stream.concat(getSources(), getSources().flatMap(Source::getAllChildren))
-                .sorted(Comparator.comparing(Source::getCreationTime));
+                .sorted(new Source.CreationTimeComparator());
     }
 
     public Stream<Source> getAllSourcesWithIdentifier(String identifier) {
         return Stream.concat(getSources(), getSources().flatMap(Source::getAllChildren))
                 .filter(s -> s.getIdentifier().equals(identifier))
-                .sorted(Comparator.comparing(Source::getCreationTime));
+                .sorted(new Source.CreationTimeComparator());
     }
 
     @OneToMany(mappedBy = "experiment")
-    private Set<Device> devices;
+    private List<Device> devices;
 
     public Device insertDevice(String name, String manufacturer) {
+        if (getDevice(name, manufacturer) != null)
+            throw new EncoreException("Device " + name + " (" + manufacturer + ") already exists");
+
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
             Device d = new Device(c, c.getAuthenticatedUser(), this, name, manufacturer);
@@ -110,8 +115,9 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
     }
 
     @OneToMany(mappedBy = "experiment")
-    @OrderBy("startTime ASC")
-    private List<EpochGroup> epochGroups;
+    @SortComparator(TimelineComparator.class)
+    @OrderBy("startTime ASC, endTime ASC")
+    private SortedSet<EpochGroup> epochGroups;
 
     public EpochGroup insertEpochGroup(Source source, String label, ZonedDateTime start, ZonedDateTime end) {
         return transactionWrapped(() -> {
@@ -119,7 +125,6 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
             EpochGroup g = new EpochGroup(c, c.getAuthenticatedUser(), this, null, source, label, start, end);
             c.insertEntity(g);
             epochGroups.add(g);
-            epochGroups.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
             return g;
         });
     }
@@ -130,7 +135,7 @@ public class Experiment extends AbstractTimelineEntity implements SourceContaine
 
     public Stream<EpochGroup> getAllEpochGroups() {
         return Stream.concat(getEpochGroups(), getEpochGroups().flatMap(EpochGroup::getAllChildren))
-                .sorted(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+                .sorted(new TimelineComparator());
     }
 
 }

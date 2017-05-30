@@ -14,12 +14,11 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 
@@ -74,7 +73,7 @@ public class ExperimentTest extends AbstractTest {
                 expected.add(p);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<Project> actual = experiment.getProjects().collect(Collectors.toList());
 
@@ -109,7 +108,7 @@ public class ExperimentTest extends AbstractTest {
                 expected.add(s);
             }
         }
-        expected.sort(Comparator.comparing(Source::getCreationTime));
+        expected.sort(new Source.CreationTimeComparator());
 
         List<Source> actual = experiment.getSources().collect(Collectors.toList());
 
@@ -128,7 +127,7 @@ public class ExperimentTest extends AbstractTest {
                 parent = s;
             }
         }
-        expected.sort(Comparator.comparing(Source::getCreationTime));
+        expected.sort(new Source.CreationTimeComparator());
 
         List<Source> actual = experiment.getAllSources().collect(Collectors.toList());
 
@@ -147,7 +146,7 @@ public class ExperimentTest extends AbstractTest {
 
         expected.add(src2);
         expected.add(src4);
-        expected.sort(Comparator.comparing(Source::getCreationTime));
+        expected.sort(new Source.CreationTimeComparator());
 
         List<Source> actual = experiment.getAllSourcesWithIdentifier("id2").collect(Collectors.toList());
 
@@ -225,7 +224,7 @@ public class ExperimentTest extends AbstractTest {
                 expected.add(g);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<EpochGroup> actual = experiment.getEpochGroups().collect(Collectors.toList());
 
@@ -244,7 +243,7 @@ public class ExperimentTest extends AbstractTest {
                 parent = g;
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<EpochGroup> actual = experiment.getAllEpochGroups().collect(Collectors.toList());
 

@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +77,7 @@ public class SourceTest extends AbstractTest {
                 expected.add(s);
             }
         }
-        expected.sort(Comparator.comparing(Source::getCreationTime));
+        expected.sort(new Source.CreationTimeComparator());
 
         List<Source> actual = source.getChildren().collect(Collectors.toList());
 
@@ -97,7 +96,7 @@ public class SourceTest extends AbstractTest {
                 parent = s;
             }
         }
-        expected.sort(Comparator.comparing(Source::getCreationTime));
+        expected.sort(new Source.CreationTimeComparator());
 
         List<Source> actual = source.getAllChildren().collect(Collectors.toList());
 

@@ -11,7 +11,10 @@ import org.mockito.MockitoAnnotations;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,7 +82,7 @@ public class EpochGroupTest extends AbstractTest {
                 expected.add(g);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<EpochGroup> actual = group.getChildren().collect(Collectors.toList());
 
@@ -98,7 +101,7 @@ public class EpochGroupTest extends AbstractTest {
                 parent = g;
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<EpochGroup> actual = group.getAllChildren().collect(Collectors.toList());
 
@@ -134,7 +137,7 @@ public class EpochGroupTest extends AbstractTest {
                 expected.add(b);
             }
         }
-        expected.sort(Comparator.comparing(AbstractTimelineEntity::getStartTime));
+        expected.sort(new AbstractTimelineEntity.TimelineComparator());
 
         List<EpochBlock> actual = group.getEpochBlocks().collect(Collectors.toList());
 

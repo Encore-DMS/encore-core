@@ -1,10 +1,12 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
+import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.ElementCollection;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.OrderBy;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 @javax.persistence.Entity
@@ -12,13 +14,15 @@ public class KeywordSet extends AbstractEntity {
 
     public KeywordSet(DataContext context) {
         super(context);
-        this.keywords = new HashSet<>();
+        this.keywords = new TreeSet<>();
     }
 
     protected KeywordSet() {}
 
     @ElementCollection
-    private Set<String> keywords;
+    @SortNatural
+    @OrderBy
+    private SortedSet<String> keywords;
 
     public void add(String keyword) {
         transactionWrapped(() -> {

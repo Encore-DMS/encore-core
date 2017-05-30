@@ -38,4 +38,5 @@ public class Device extends AbstractResourceAnnotatableEntity {
     public String getManufacturer() {
         return manufacturer;
     }
+
 }
