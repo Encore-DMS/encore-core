@@ -156,7 +156,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
 
     @Override
     public Multimap<User, String> getKeywords() {
-        SetMultimap<User, String> result = HashMultimap.create();
+        ListMultimap<User, String> result = LinkedListMultimap.create();
         for (Map.Entry<User, KeywordSet> e : keywords.entrySet()) {
             result.putAll(e.getKey(), e.getValue().getKeywords()::iterator);
         }
@@ -165,7 +165,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
 
     @Override
     public Stream<String> getAllKeywords() {
-        return keywords.values().stream().flatMap(KeywordSet::getKeywords).sorted();
+        return keywords.values().stream().flatMap(KeywordSet::getKeywords).distinct().sorted();
     }
 
     @Override
@@ -207,7 +207,7 @@ abstract class AbstractAnnotatableEntity extends AbstractEntity implements Owned
 
     @Override
     public Multimap<User, Note> getNotes() {
-        SetMultimap<User, Note> result = HashMultimap.create();
+        ListMultimap<User, Note> result = LinkedListMultimap.create();
         for (Map.Entry<User, NoteSet> e : notes.entrySet()) {
             result.putAll(e.getKey(), e.getValue().getNotes()::iterator);
         }

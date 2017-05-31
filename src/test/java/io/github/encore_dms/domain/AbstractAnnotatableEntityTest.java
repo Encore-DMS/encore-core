@@ -1,9 +1,6 @@
 package io.github.encore_dms.domain;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.*;
 import io.github.encore_dms.AbstractTest;
 import io.github.encore_dms.DataContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -178,9 +175,9 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         User user1 = mock(User.class);
         User user2 = mock(User.class);
 
-        SetMultimap<User, String> expected = HashMultimap.create();
-        expected.putAll(user1, Arrays.asList("one", "two", "three"));
-        expected.putAll(user2, Arrays.asList("four", "five", "six"));
+        ListMultimap<User, String> expected = LinkedListMultimap.create();
+        expected.putAll(user1, new TreeSet<>(Arrays.asList("one", "two", "three")));
+        expected.putAll(user2, new TreeSet<>(Arrays.asList("four", "five", "six")));
 
         for (Map.Entry<User, String> e : expected.entries()) {
             when(context.getAuthenticatedUser()).thenReturn(e.getKey());
@@ -192,7 +189,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
 
     @Test
     public void removeKeyword() {
-        Set<String> expected = new HashSet<>(Arrays.asList("one", "two", "three"));
+        List<String> expected = new LinkedList<>(Arrays.asList("one", "two", "three"));
 
         for (String k : expected) {
             entity.addKeyword(k);
@@ -216,7 +213,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         User user1 = mock(User.class);
         User user2 = mock(User.class);
 
-        SetMultimap<User, String> expected = HashMultimap.create();
+        ListMultimap<User, String> expected = LinkedListMultimap.create();
         expected.putAll(user1, Arrays.asList("one", "two", "three"));
         expected.putAll(user2, Arrays.asList("four", "five", "six"));
 
@@ -304,7 +301,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         User user1 = mock(User.class);
         User user2 = mock(User.class);
 
-        SetMultimap<User, Note> expected = HashMultimap.create();
+        ListMultimap<User, Note> expected = LinkedListMultimap.create();
 
         when(context.getAuthenticatedUser()).thenReturn(user1);
         expected.put(user1, entity.addNote(time.plusMinutes(1), "one"));
@@ -323,7 +320,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
     public void removeNote() {
         ZonedDateTime time = ZonedDateTime.parse("2016-07-01T12:00:00Z[GMT]");
 
-        Set<Note> expected = new HashSet<>();
+        List<Note> expected = new LinkedList<>();
 
         Note n1 = entity.addNote(time.plusMinutes(1), "one");
         Note n2 = entity.addNote(time.plusMinutes(2), "two");
@@ -350,7 +347,7 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         User user1 = mock(User.class);
         User user2 = mock(User.class);
 
-        SetMultimap<User, Note> expected = HashMultimap.create();
+        ListMultimap<User, Note> expected = LinkedListMultimap.create();
 
         when(context.getAuthenticatedUser()).thenReturn(user1);
         Note n1 = entity.addNote(time.plusMinutes(1), "one");
