@@ -176,8 +176,8 @@ public class AbstractAnnotatableEntityTest extends AbstractTest {
         User user2 = mock(User.class);
 
         ListMultimap<User, String> expected = LinkedListMultimap.create();
-        expected.putAll(user1, new TreeSet<>(Arrays.asList("one", "two", "three")));
-        expected.putAll(user2, new TreeSet<>(Arrays.asList("four", "five", "six")));
+        expected.putAll(user1, Arrays.asList("one", "two", "three"));
+        expected.putAll(user2, Arrays.asList("four", "five", "six"));
 
         for (Map.Entry<User, String> e : expected.entries()) {
             when(context.getAuthenticatedUser()).thenReturn(e.getKey());

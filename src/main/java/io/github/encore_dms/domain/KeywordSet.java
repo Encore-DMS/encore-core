@@ -5,8 +5,7 @@ import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.OrderBy;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 @javax.persistence.Entity
@@ -14,15 +13,13 @@ public class KeywordSet extends AbstractEntity {
 
     public KeywordSet(DataContext context) {
         super(context);
-        this.keywords = new TreeSet<>();
+        this.keywords = new LinkedHashSet<>();
     }
 
     protected KeywordSet() {}
 
     @ElementCollection
-    @SortNatural
-    @OrderBy
-    private SortedSet<String> keywords;
+    private Set<String> keywords;
 
     public void add(String keyword) {
         transactionWrapped(() -> {
