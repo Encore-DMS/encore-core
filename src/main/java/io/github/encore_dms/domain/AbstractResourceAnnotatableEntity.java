@@ -28,14 +28,14 @@ abstract class AbstractResourceAnnotatableEntity extends AbstractAnnotatableEnti
     private Map<String, Resource> resources;
 
     @Override
-    public Resource addResource(String name, byte[] data, String uri) {
+    public Resource addResource(String name, byte[] data, String uti) {
         if (resources.containsKey(name))
             throw new EncoreException("Resource with the given name already exists");
 
         return transactionWrapped(() -> {
             DataContext c = getDataContext();
             User user = c.getAuthenticatedUser();
-            Resource resource = new Resource(c, user, name, data, uri);
+            Resource resource = new Resource(c, user, name, data, uti);
             c.insertEntity(resource);
             resources.put(resource.getName(), resource);
             return resource;

@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public interface ResourceContainer {
 
-    Resource addResource(String name, byte[] data, String uri);
+    Resource addResource(String name, byte[] data, String uti);
 
     void removeResource(String name);
 
