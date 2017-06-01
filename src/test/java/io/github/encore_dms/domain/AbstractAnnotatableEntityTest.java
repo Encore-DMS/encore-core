@@ -1,6 +1,9 @@
 package io.github.encore_dms.domain;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import io.github.encore_dms.AbstractTest;
 import io.github.encore_dms.DataContext;
 import org.junit.jupiter.api.BeforeEach;

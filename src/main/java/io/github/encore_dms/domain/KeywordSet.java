@@ -1,11 +1,10 @@
 package io.github.encore_dms.domain;
 
 import io.github.encore_dms.DataContext;
-import org.hibernate.annotations.SortNatural;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.OrderBy;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @javax.persistence.Entity
