@@ -53,6 +53,20 @@ public class ExperimentTest extends AbstractTest {
     }
 
     @Test
+    public void setPurposeFail() {
+        String purpose = "a new experiment purpose";
+        assertNotEquals(experiment.getPurpose(), purpose);
+
+        experiment.setPurpose(purpose);
+
+        InOrder inOrder = inOrder(context);
+        inOrder.verify(context, atLeastOnce()).beginTransaction();
+        inOrder.verify(context, atLeastOnce()).commitTransaction();
+
+        assertEquals(experiment.getPurpose(), "not the purpose");
+    }
+
+    @Test
     public void addProject() {
         assertEquals(0, experiment.getProjects().count());
         Project p = new Project(context, null, "name", "purpose", ZonedDateTime.now(), ZonedDateTime.now());
